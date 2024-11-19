@@ -2,17 +2,18 @@ const Course = require("../models/Course");
 
 // Create a new course
 const createCourse = async (req, res) => {
-    const { title, description, content } = req.body;
+    const { title, description, content, whatYoullLearn, thumbnail } = req.body;
     const instructor = req.userId; // From JWT token
 
     try {
-        const newCourse = new Course({ title, description, content, instructor });
+        const newCourse = new Course({ title, description, content, instructor, whatYoullLearn, thumbnail });
         await newCourse.save();
         res.status(201).json(newCourse);
     } catch (err) {
         res.status(500).json({ msg: "Server error" });
     }
 };
+
 
 // List all courses
 const listCourses = async (req, res) => {
@@ -40,7 +41,7 @@ const getCourse = async (req, res) => {
 // Update a course
 const updateCourse = async (req, res) => {
     const { courseId } = req.params;
-    const { title, description, content } = req.body;
+    const { title, description, content, whatYoullLearn, thumbnail } = req.body;
     const instructor = req.userId; // From JWT token
 
     try {
@@ -55,6 +56,8 @@ const updateCourse = async (req, res) => {
         course.title = title || course.title;
         course.description = description || course.description;
         course.content = content || course.content;
+        course.whatYoullLearn = whatYoullLearn || course.whatYoullLearn;
+        course.thumbnail = thumbnail || course.thumbnail;
 
         await course.save();
         res.status(200).json(course);
@@ -62,6 +65,7 @@ const updateCourse = async (req, res) => {
         res.status(500).json({ msg: "Server error" });
     }
 };
+
 
 // Delete a course
 const deleteCourse = async (req, res) => {

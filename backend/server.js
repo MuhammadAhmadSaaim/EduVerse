@@ -16,6 +16,8 @@ connectDB();
 // Routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/courses", require("./routes/course"));
+app.use("/api/content", require("./routes/contentRoutes")); // Add content routes
+
 // Add other routes as necessary
 
 const PORT = process.env.PORT || 5000;
