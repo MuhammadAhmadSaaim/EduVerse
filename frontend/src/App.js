@@ -6,7 +6,8 @@ import CreateCourse from './Pages/Instructor/createCourse';
 import EditCourse from './Pages/Instructor/editCourse';
 
 import StudentDashboard from './Pages/Student/studentDashboard';
-import CourseDetails from './Pages/Student/courseDetails'
+import CourseDetails from './Pages/Student/courseDetails';
+import EnrolledCourseDetails from './Pages/Student/enrolledCourseDetail';
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
 
           {/* Student routes */}
           <Route path="/student/dashboard" element={<StudentDashboard />} />
-          {/* <Route path="/course/enrolled/:id" element={<EnrolledCourseDetails />} /> */}
+          <Route path="/course/enrolled/:id" element={<EnrolledCourseDetails />} />
           <Route path="/course/:id" element={<CourseDetails />} />
         </Routes>
       </Layout>
