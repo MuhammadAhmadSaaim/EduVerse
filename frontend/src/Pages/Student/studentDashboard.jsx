@@ -21,7 +21,7 @@ const StudentDashboard = () => {
       },
       thumbnail:
         "https://cdn.shopaccino.com/igmguru/articles/deep-learning-900x506.jpg",
-      difficultyLevel: "easy", // New Attribute
+      difficultyLevel: "easy", 
       whatYoullLearn: [
         "Understand basic programming concepts",
         "Write simple JavaScript programs",
@@ -31,12 +31,12 @@ const StudentDashboard = () => {
         {
           id: "641e9b7e4e8c1e1234567892",
           title: "Introduction",
-          videoUrl: "https://sample-videos.com/video1",
+          videoUrl: "https://www.youtube.com/embed/NArVyt8t-z4",
         },
         {
           id: "641e9b7e4e8c1e1234567893",
           title: "Getting Started with JavaScript",
-          videoUrl: "https://sample-videos.com/video2",
+          videoUrl: "https://www.youtube.com/watch?v=9MEAQqCHqcc",
         },
       ],
       students: [

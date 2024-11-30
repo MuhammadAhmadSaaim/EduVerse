@@ -19,6 +19,11 @@ const EnrolledCourseDetails = () => {
                 },
                 thumbnail: "https://cdn.shopaccino.com/igmguru/articles/deep-learning-900x506.jpg",
                 difficultyLevel: "easy",
+                whatYoullLearn: [
+                    "Understand basic programming concepts",
+                    "Write simple JavaScript programs",
+                    "Debug and test your code",
+                ],
                 content: [
                     {
                         id: "641e9b7e4e8c1e1234567892",
@@ -28,11 +33,72 @@ const EnrolledCourseDetails = () => {
                     {
                         id: "641e9b7e4e8c1e1234567893",
                         title: "Getting Started with JavaScript",
-                        videoUrl: "https://www.youtube.com/embed/NArVyt8t-z4",
+                        videoUrl: "https://www.youtube.com/watch?v=9MEAQqCHqcc",
+                    },
+                ],
+                students: [
+                    {
+                        id: "641e9b7e4e8c1e1234567894",
+                        name: "Saba Shafique",
+                    },
+                ],
+                progress: [
+                    {
+                        student: {
+                            id: "641e9b7e4e8c1e1234567894",
+                            name: "Saba Shafique",
+                        },
+                        completedContentIds: ["641e9b7e4e8c1e1234567892"],
+                        remainingContentIds: ["641e9b7e4e8c1e1234567893"],
+                    },
+                ],
+            },
+            {
+                id: "641e9b7e4e8c1e1234567895",
+                title: "Advanced Web Development",
+                description: "Master front-end and back-end web development.",
+                instructor: {
+                    id: "641e9b7e4e8c1e1234567896",
+                    name: "Jane Smith",
+                },
+                thumbnail: "https://cdn.shopaccino.com/igmguru/articles/deep-learning-900x506.jpg",
+                difficultyLevel: "hard",
+                whatYoullLearn: [
+                    "Build full-stack web applications",
+                    "Learn React, Node.js, and MongoDB",
+                    "Deploy your projects to production",
+                ],
+                content: [
+                    {
+                        id: "641e9b7e4e8c1e1234567897",
+                        title: "React Basics",
+                        videoUrl: "https://sample-videos.com/video3",
+                    },
+                    {
+                        id: "641e9b7e4e8c1e1234567898",
+                        title: "Backend with Node.js",
+                        videoUrl: "https://sample-videos.com/video4",
+                    },
+                ],
+                students: [
+                    {
+                        id: "641e9b7e4e8c1e1234567899",
+                        name: "Ali Ahmed",
+                    },
+                ],
+                progress: [
+                    {
+                        student: {
+                            id: "641e9b7e4e8c1e1234567894",
+                            name: "Saba Shafique",
+                        },
+                        completedContentIds: ["641e9b7e4e8c1e1234567897"],
+                        remainingContentIds: ["641e9b7e4e8c1e1234567898"],
                     },
                 ],
             },
         ];
+        
 
         const selectedCourse = allCourses.find((course) => course.id === id);
         setCourse(selectedCourse || null);
