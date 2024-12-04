@@ -1,13 +1,34 @@
 const express = require("express");
-const { createCourse, listCourses, getCourse, updateCourse, deleteCourse, enrollInCourse, dropCourse } = require("../controllers/courseController");
+const multer = require("multer");
+const path = require("path");
 const auth = require("../middleware/auth");
+const {
+    createCourse,
+    listCourses,
+    getCourse,
+    updateCourse,
+    deleteCourse,
+    enrollInCourse,
+    dropCourse
+} = require("../controllers/courseController");
 
 const router = express.Router();
 
-// Create a new course
-router.post("/create", auth, createCourse);
+// Multer setup to handle file uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/"); // Directory where the file will be stored
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // Creating a unique filename
+    }
+});
 
-// List all courses
+const upload = multer({ storage: storage });
+
+// Create a new course
+router.post("/create", auth, upload.single("thumbnail"), createCourse);
+
 router.get("/", listCourses);
 
 // Get course by ID

@@ -14,7 +14,7 @@ function App() {
     <Router>
       <Layout className="bg-[#f0f8ff]">
         <Routes>
-          <Route path="/" element={<StudentDashboard />} />   {/* Only for Testing */}
+          <Route path="/" element={<InstructorDashboard />} />
 
           {/* Instructor routes */}
           <Route path="/instructor/dashboard" element={<InstructorDashboard />} />

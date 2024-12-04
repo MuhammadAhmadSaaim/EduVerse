@@ -1,16 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Import useHistory for navigation
 
 const CreateCourse = () => {
-    // State to store course details
     const [courseData, setCourseData] = useState({
-        title: '',
-        description: '',
-        image: '',
-        imageFile: null, // To handle file upload
-        whatYoullLearn: [''],
-        difficultyLevel: '',
+        title: "",
+        description: "",
+        image: "",
+        imageFile: null,
+        whatYoullLearn: [""],
+        difficultyLevel: "",
         content: [],
     });
+
+    const [popupVisible, setPopupVisible] = useState(false);
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -24,11 +28,14 @@ const CreateCourse = () => {
     };
 
     const addWhatYouLearnPoint = () => {
-        setCourseData({ ...courseData, whatYoullLearn: [...courseData.whatYoullLearn, ''] });
+        setCourseData({ ...courseData, whatYoullLearn: [...courseData.whatYoullLearn, ""] });
     };
 
     const addContentSection = () => {
-        setCourseData({ ...courseData, content: [...courseData.content, { videoUrl: '', quizLink: '' }] });
+        setCourseData({
+            ...courseData,
+            content: [...courseData.content, { title: "", type: "video", videoUrl: "", thumbnail: "", description: "" }],
+        });
     };
 
     const handleContentChange = (index, type, value) => {
@@ -44,145 +51,238 @@ const CreateCourse = () => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Course Data:', courseData);
-        // Make an API call here to submit the course data
+
+        const formData = new FormData();
+        formData.append("title", courseData.title);
+        formData.append("description", courseData.description);
+        formData.append("difficultyLevel", courseData.difficultyLevel);
+        formData.append("whatYoullLearn", JSON.stringify(courseData.whatYoullLearn));
+
+        // Prepare content data for submission
+        const contentData = courseData.content.map((contentItem) => ({
+            title: contentItem.title,
+            type: contentItem.type,
+            videoUrl: contentItem.videoUrl,
+            thumbnail: contentItem.thumbnail,
+            description: contentItem.description,
+        }));
+
+        formData.append("content", JSON.stringify(contentData));
+
+        // Handle the thumbnail image upload
+        if (courseData.imageFile) {
+            formData.append("thumbnail", courseData.imageFile);
+        } else {
+            formData.append("thumbnail", courseData.image); // URL fallback
+        }
+
+        try {
+            const response = await axios.post("http://localhost:5000/api/courses/create", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzUwYTYzY2Q2NzQ0MDIxZjIwZDdhOGYiLCJpYXQiOjE3MzMzMzg2ODQsImV4cCI6MTczMzM0MjI4NH0.IhOpwAx4TQjVYElo6NTspQnvQd5fMAzQrXjpua8xfvE", // Make sure the token is dynamic or correct
+                },
+            });
+            console.log("Course created:", response.data);
+
+            // Show success popup
+            setPopupVisible(true);
+
+            // Navigate to the instructor dashboard after a delay
+            setTimeout(() => {
+                navigate("/instructor/dashboard");
+            }, 2000); // Adjust the delay as needed
+        } catch (err) {
+            console.error("Error creating course:", err.response?.data || err.message);
+        }
     };
 
     return (
-        <div className="max-w-2xl mx-auto p-8 bg-white shadow-md rounded-md">
-            <h1 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Create New Course</h1>
+        <div className="w-4/5 my-10 mx-auto p-8 bg-gray-100 rounded-lg">
+            <h1 className="text-4xl font-semibold text-gray-800 mb-8 text-center">Create New Course</h1>
             <form onSubmit={handleSubmit}>
 
-                {/* Course Title */}
-                <label className="block mb-4">
-                    <span className="text-gray-700 font-semibold">Course Title:</span>
-                    <input
-                        type="text"
-                        name="title"
-                        value={courseData.title}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border rounded-md p-3 focus:border-blue-400 focus:ring focus:ring-blue-200 transition duration-200"
-                        placeholder="Enter course title"
-                        required
-                    />
-                </label>
-
-                {/* Description */}
-                <label className="block mb-4">
-                    <span className="text-gray-700 font-semibold">Description:</span>
-                    <textarea
-                        name="description"
-                        value={courseData.description}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border rounded-md p-3 focus:border-blue-400 focus:ring focus:ring-blue-200 transition duration-200"
-                        placeholder="Enter course description"
-                        required
-                    />
-                </label>
-
-                {/* Image Upload or URL */}
-                <label className="block mb-4">
-                    <span className="text-gray-700 font-semibold">Course Thumbnail:</span>
-                    <div className="flex items-center space-x-4">
+                {/* Course Info Section */}
+                <div className="bg-white p-6 shadow-md rounded-lg mb-6">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Course Info</h2>
+                    <label className="block mb-4">
+                        <span className="text-gray-700 font-semibold">Course Title:</span>
                         <input
                             type="text"
-                            name="image"
-                            value={courseData.image}
+                            name="title"
+                            value={courseData.title}
                             onChange={handleChange}
-                            className="mt-1 block w-full border rounded-md p-3 focus:border-blue-400 focus:ring focus:ring-blue-200 transition duration-200"
-                            placeholder="Enter image URL"
+                            className="mt-1 block w-full border rounded-lg p-3"
+                            placeholder="Enter course title"
+                            required
                         />
-                        <input
-                            type="file"
-                            onChange={handleImageUpload}
-                            className="mt-1 block"
+                    </label>
+                    <label className="block mb-4">
+                        <span className="text-gray-700 font-semibold">Description:</span>
+                        <textarea
+                            name="description"
+                            value={courseData.description}
+                            onChange={handleChange}
+                            className="mt-1 block w-full border rounded-lg p-3"
+                            placeholder="Enter course description"
+                            required
                         />
-                    </div>
-                </label>
-
-                {/* Difficulty Level */}
-                <label className="block mb-4">
-                    <span className="text-gray-700 font-semibold">Difficulty Level:</span>
-                    <select
-                        name="difficultyLevel"
-                        value={courseData.difficultyLevel}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border rounded-md p-3 focus:border-blue-400 focus:ring focus:ring-blue-200 transition duration-200"
-                        required
-                    >
-                        <option value="">Select Difficulty</option>
-                        <option value="Beginner">Beginner</option>
-                        <option value="Intermediate">Intermediate</option>
-                        <option value="Advanced">Advanced</option>
-                        <option value="Expert">Expert</option>
-                    </select>
-                </label>
-
-                {/* What You'll Learn */}
-                <label className="block mb-4">
-                    <span className="text-gray-700 font-semibold">What You'll Learn:</span>
-                    {courseData.whatYoullLearn.map((point, index) => (
-                        <div key={index} className="flex items-center mb-2">
+                    </label>
+                    <label className="block mb-4">
+                        <span className="text-gray-700 font-semibold">Course Thumbnail:</span>
+                        <div className="flex items-center space-x-4">
                             <input
                                 type="text"
-                                value={point}
-                                onChange={(e) => handleWhatYouLearnChange(index, e.target.value)}
-                                className="block w-full border rounded-md p-3 focus:border-blue-400 focus:ring focus:ring-blue-200 transition duration-200"
-                                placeholder="Enter learning outcome"
-                                required
+                                name="image"
+                                value={courseData.image}
+                                onChange={handleChange}
+                                className="block w-full border rounded-lg p-3"
+                                placeholder="Enter image URL"
+                            />
+                            <input
+                                type="file"
+                                onChange={handleImageUpload}
+                                className="block"
                             />
                         </div>
-                    ))}
-                    <button
-                        type="button"
-                        onClick={addWhatYouLearnPoint}
-                        className="text-blue-500 hover:text-blue-700 font-semibold mt-2"
-                    >
-                        + Add Another Point
-                    </button>
-                </label>
+                    </label>
+                </div>
 
-                {/* Content Sections (Video Lectures or Quizzes) */}
-                <label className="block mb-4">
-                    <span className="text-gray-700 font-semibold">Content (Lectures or Quiz Links):</span>
+                {/* Learning Outcomes Section */}
+                <div className="bg-white p-6 shadow-md rounded-lg mb-6">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-4">What You'll Learn & Difficulty</h2>
+                    <label className="block mb-4">
+                        <span className="text-gray-700 font-semibold">Difficulty Level:</span>
+                        <select
+                            name="difficultyLevel"
+                            value={courseData.difficultyLevel}
+                            onChange={handleChange}
+                            className="mt-1 block w-full border rounded-lg p-3"
+                            required
+                        >
+                            <option value="">Select Difficulty</option>
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </label>
+                    <label className="block mb-4">
+                        <span className="text-gray-700 font-semibold">What You'll Learn:</span>
+                        {courseData.whatYoullLearn.map((point, index) => (
+                            <div key={index} className="flex items-center mb-2">
+                                <input
+                                    type="text"
+                                    value={point}
+                                    onChange={(e) => handleWhatYouLearnChange(index, e.target.value)}
+                                    className="block w-full border rounded-lg p-3"
+                                    placeholder="Enter learning outcome"
+                                    required
+                                />
+                            </div>
+                        ))}
+                        <button
+                            type="button"
+                            onClick={addWhatYouLearnPoint}
+                            className="text-gray-800 hover:text-black font-semibold mt-2"
+                        >
+                            + Add Another Point
+                        </button>
+                    </label>
+                </div>
+
+                {/* Content Section */}
+                <div className="bg-white p-6 shadow-md rounded-lg mb-6">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Content Sections</h2>
                     {courseData.content.map((contentItem, index) => (
-                        <div key={index} className="mb-4">
-                            <div className="flex items-center mb-2">
+                        <div key={index} className="mb-4 border-b pb-4">
+                            <label className="block mb-2">
+                                <span className="text-gray-700">Title:</span>
                                 <input
                                     type="text"
-                                    value={contentItem.videoUrl}
-                                    onChange={(e) => handleContentChange(index, 'videoUrl', e.target.value)}
-                                    placeholder="Video URL"
-                                    className="block w-full border rounded-md p-3 focus:border-blue-400 focus:ring focus:ring-blue-200 transition duration-200"
+                                    value={contentItem.title}
+                                    onChange={(e) => handleContentChange(index, "title", e.target.value)}
+                                    className="block w-full border rounded-lg p-3"
+                                    placeholder="Enter content title"
+                                    required
                                 />
-                            </div>
-                            <div className="flex items-center mb-2">
-                                <input
-                                    type="text"
-                                    value={contentItem.quizLink}
-                                    onChange={(e) => handleContentChange(index, 'quizLink', e.target.value)}
-                                    placeholder="Google Form Quiz Link"
-                                    className="block w-full border rounded-md p-3 focus:border-blue-400 focus:ring focus:ring-blue-200 transition duration-200"
+                            </label>
+                            <label className="block mb-2">
+                                <span className="text-gray-700">Type:</span>
+                                <select
+                                    value={contentItem.type}
+                                    onChange={(e) => handleContentChange(index, "type", e.target.value)}
+                                    className="block w-full border rounded-lg p-3"
+                                >
+                                    <option value="video">Video</option>
+                                    <option value="quiz">Quiz</option>
+                                    <option value="assignment">Assignment</option>
+                                </select>
+                            </label>
+                            {contentItem.type === "video" && (
+                                <>
+                                    <label className="block mb-2">
+                                        <span className="text-gray-700">Video URL:</span>
+                                        <input
+                                            type="text"
+                                            value={contentItem.videoUrl}
+                                            onChange={(e) => handleContentChange(index, "videoUrl", e.target.value)}
+                                            className="block w-full border rounded-lg p-3"
+                                            placeholder="Enter video URL"
+                                            required
+                                        />
+                                    </label>
+                                    <label className="block mb-2">
+                                        <span className="text-gray-700">Thumbnail:</span>
+                                        <input
+                                            type="text"
+                                            value={contentItem.thumbnail}
+                                            onChange={(e) => handleContentChange(index, "thumbnail", e.target.value)}
+                                            className="block w-full border rounded-lg p-3"
+                                            placeholder="Enter thumbnail URL"
+                                            required
+                                        />
+                                    </label>
+                                </>
+                            )}
+                            <label className="block mb-2">
+                                <span className="text-gray-700">Description:</span>
+                                <textarea
+                                    value={contentItem.description}
+                                    onChange={(e) => handleContentChange(index, "description", e.target.value)}
+                                    className="block w-full border rounded-lg p-3"
+                                    placeholder="Enter brief description"
                                 />
-                            </div>
+                            </label>
                         </div>
                     ))}
                     <button
                         type="button"
                         onClick={addContentSection}
-                        className="text-blue-500 hover:text-blue-700 font-semibold mt-2"
+                        className="text-gray-800 hover:text-black font-semibold mt-2"
                     >
                         + Add Content Section
                     </button>
-                </label>
+                </div>
 
                 {/* Submit Button */}
-                <button type="submit" className="w-full bg-blue-500 text-white font-semibold py-3 rounded-md hover:bg-green-600 transition duration-200">
+                <button
+                    type="submit"
+                    className="w-full bg-gray-800 text-white font-semibold py-3 rounded-lg hover:bg-black transition duration-200"
+                >
                     Create Course
                 </button>
             </form>
+
+            {/* Popup */}
+            {popupVisible && (
+                <div className="fixed inset-0 flex justify-center items-center bg-gray-700 bg-opacity-50">
+                    <div className="bg-white p-8 rounded-lg shadow-lg text-center">
+                        <p className="text-lg font-semibold">Course Created Successfully!</p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

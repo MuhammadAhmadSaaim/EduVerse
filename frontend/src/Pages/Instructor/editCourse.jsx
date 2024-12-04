@@ -19,7 +19,7 @@ const EditCourse = () => {
                 title: "React Basics Quiz",
             },
         ],
-        students: ["Alice", "Bob", "Charlie", "David"],
+        students: ["Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Hank"],
     };
 
     const [courseData, setCourseData] = useState(initialCourseData);
@@ -70,7 +70,7 @@ const EditCourse = () => {
     };
 
     return (
-        <div className="p-8 min-h-screen text-[#f0f8ff]">
+        <div className="p-8 min-h-screen text-[#f0f8ff] w-4/5 mx-auto">
             <div className="max-w-[80%] mx-auto sm:max-w-full sm:px-4">
                 <h1 className="text-3xl font-bold text-center mb-6 text-gray-900">Course Details</h1>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -159,8 +159,21 @@ const EditCourse = () => {
 
                         {/* Students Enrolled */}
                         <div className="p-4 bg-gray-900 shadow-md rounded-lg">
-                            <h2 className="text-xl font-semibold mb-4">Students Enrolled</h2>
-                            <p className="text-gray-300">Total Students: {courseData.students.length}</p>
+                            <h2 className="text-xl font-semibold mb-4 text-gray-100">Students Enrolled</h2>
+                            <p className="text-gray-300 mb-4">Total Students: {initialCourseData.students.length}</p>
+                            <div
+                                className="overflow-y-auto max-h-40 border-t border-gray-700 pt-2"
+                                style={{ scrollbarWidth: "thin", scrollbarColor: "#4A5568 #2D3748" }}
+                            >
+                                {initialCourseData.students.map((student, index) => (
+                                    <div
+                                        key={index}
+                                        className={"bg-gray-700 text-gray-200 p-2 rounded mb-2 shadow-sm"}
+                                    >
+                                        {student}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
