@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const EnrolledCourseDetails = () => {
+  const navigate = useNavigate();
+
   const { id } = useParams(); // Get course ID from URL parameters
   const [course, setCourse] = useState(null);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0); // Track current lesson index
@@ -127,6 +129,16 @@ const EnrolledCourseDetails = () => {
     );
   };
 
+  const handleUnenroll = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to unenroll from this course?"
+    );
+    if (confirmed) {
+      navigate("/student/dashboard");
+    }
+    // If not confirmed, stay on the current page (default behavior)
+  };
+
   if (!course) {
     return (
       <div className="p-6 text-center text-red-500 font-semibold">
@@ -138,7 +150,7 @@ const EnrolledCourseDetails = () => {
   const currentLesson = course.content[currentLessonIndex];
 
   return (
-    <div className="p-8 bg-blue-50 rounded-lg shadow-xl max-w-4xl mx-auto">
+    <div className="p-8 bg-blue-50 rounded-lg shadow-xl w-4/5 max-w-4xl mx-auto">
       {/* Combined Card for Course Title, Thumbnail, and Difficulty Level */}
       <div className="p-6 bg-gray-900 text-white shadow-md rounded-lg mb-6">
         {/* Course Title and Thumbnail */}
@@ -156,19 +168,26 @@ const EnrolledCourseDetails = () => {
           </div>
         </div>
 
-        {/* Difficulty Level */}
-        <div className="mt-4">
-          <p className="text-sm font-semibold text-gray-300">
-            Difficulty Level:
-          </p>
-          <span
-            className={`text-lg font-medium ${getDifficultyColor(
-              course.difficultyLevel
-            )}`}
+        <div className="flex items-center justify-between mt-4">
+          <div>
+            <p className="text-sm font-semibold text-gray-300">
+              Difficulty Level:
+            </p>
+            <span
+              className={`text-lg font-medium ${getDifficultyColor(
+                course.difficultyLevel
+              )}`}
+            >
+              {course.difficultyLevel.charAt(0).toUpperCase() +
+                course.difficultyLevel.slice(1)}
+            </span>
+          </div>
+          <button
+            onClick={handleUnenroll}
+            className="bg-gray-800 hover:bg-gray-700 text-white w-48 px-4 py-2 rounded-md shadow-md font-semibold"
           >
-            {course.difficultyLevel.charAt(0).toUpperCase() +
-              course.difficultyLevel.slice(1)}
-          </span>
+            Unenroll
+          </button>
         </div>
       </div>
 
