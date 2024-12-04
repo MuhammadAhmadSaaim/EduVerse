@@ -189,6 +189,7 @@ const EnrolledCourseDetails = () => {
             Unenroll
           </button>
         </div>
+        
       </div>
 
       {/* Course Content Section */}
