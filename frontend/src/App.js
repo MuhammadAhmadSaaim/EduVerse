@@ -23,9 +23,9 @@ function App() {
         <Routes>
           <Route path="/" element={<InstructorDashboard />} />   {/* make Login page */}
 
-           {/* Login page route */}
-           <Route path="/login" element={<Login />} />
-           <Route path="/register" element={<Register />} />
+          {/* Login page route */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
           <Route path="/" element={<InstructorDashboard />} />
 
