@@ -86,7 +86,7 @@ const EnrolledCourseDetails = () => {
     if (confirmed) {
       try {
         await axios.post(
-          `http://localhost:5000/api/courses/unenroll/${id}`,
+          `http://localhost:5000/api/courses/drop/${id}`,
           {},
           {
             headers: {

@@ -319,7 +319,7 @@ const enrollInCourse = async (req, res) => {
     } catch (err) {
         res.status(500).json({ msg: "Error enrolling in course", error: err.message });
     }
-};
+};  
 
 // Drop a course
 const dropCourse = async (req, res) => {

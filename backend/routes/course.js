@@ -14,6 +14,7 @@ const {
   getRecommendations,
   getCourseDetail,
   getEnrolledCourse,
+
 } = require("../controllers/courseController");
 
 const router = express.Router();

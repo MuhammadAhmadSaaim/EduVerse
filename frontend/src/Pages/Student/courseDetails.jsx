@@ -41,24 +41,33 @@ const CourseDetails = () => {
     };
 
     // Enroll function that calls the API to enroll the student
-    const enrollInCourse = async (courseId) => {
+    const enrollInCourse = async () => {
+
+        console.log("Token:", token);
+
         try {
             const response = await axios.post(
-                `http://localhost:5000/api/courses/enroll/${courseId}`,
-                {},
+                `http://localhost:5000/api/courses/enroll/${course.id}`,
+                {}, // Request body
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 }
             );
-            alert(response.data.msg); // Show success message
-            navigate(`/course/enrolled/${courseId}`); // Redirect to the enrolled page (optional)
+            alert(response.data.msg);
+            navigate(`/course/enrolled/${id}`);
         } catch (err) {
-            console.error(err);
-            alert("Error enrolling in course");
+            if (err.response?.status === 401) {
+                alert("You are not authorized. Please log in again.");
+                navigate("/login");
+            } else {
+                console.error(err);
+                alert("Error enrolling in course");
+            }
         }
     };
+    
 
     useEffect(() => {
         fetchCourseDetails(); // Fetch course when component loads
@@ -125,7 +134,7 @@ const CourseDetails = () => {
             <div className="flex justify-center">
                 <button
                     className="bg-gray-800 text-white px-6 py-3 rounded-lg hover:shadow-xl transition-all duration-300"
-                    onClick={() => enrollInCourse(course.id)}
+                    onClick={() => enrollInCourse()}
                 >
                     Enroll for Free
                 </button>
