@@ -20,13 +20,7 @@ const StudentEnrolledCourseCard = ({ course }) => {
                     {course.difficultyLevel.charAt(0).toUpperCase() + course.difficultyLevel.slice(1)}
                 </span>
             </p>
-
-            {/* Description */}
-            {/* <p className="text-gray-600 mb-4">{course.description}</p> */}
-
-            {/* Number of Students Enrolled */}
-            {/* <p className="text-gray-500 text-sm">Enrolled Students: {course.students.length}</p> */}
-
+            
             {/* View Progress of the course */}
             <button className="bg-gray-800 text-white px-3 py-1 rounded mt-4 justify-center w-full hover:shadow-xl transition duration-200 cursor-pointer"
                 onClick={() => navigate(`/course/enrolled/${course.id}`)}
