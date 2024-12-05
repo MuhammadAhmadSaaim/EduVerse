@@ -13,6 +13,7 @@ const InstructorDashboard = () => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const token = localStorage.getItem("token");
 
     // Fetch courses from the backend
     useEffect(() => {
@@ -20,7 +21,7 @@ const InstructorDashboard = () => {
             try {
                 const response = await axios.get("http://localhost:5000/api/courses", {
                     headers: {
-                        "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzUwYTYzY2Q2NzQ0MDIxZjIwZDdhOGYiLCJpYXQiOjE3MzMzODY5NzMsImV4cCI6MTczMzM5MDU3M30.3rYFLc1s5KLYRjAUjD9PS2eUEEVCAXEpn5pcAeGb8co",
+                        Authorization: `Bearer ${token}`,
                     },
                 });
                 setCourses(response.data);

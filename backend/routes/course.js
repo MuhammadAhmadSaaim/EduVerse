@@ -1,4 +1,5 @@
 const express = require("express");
+
 const multer = require("multer");
 const path = require("path");
 const auth = require("../middleware/auth");
@@ -10,7 +11,7 @@ const {
     deleteCourse,
     enrollInCourse,
     dropCourse,
-    getStudentCourses
+  getRecommendations
 } = require("../controllers/courseController");
 
 const router = express.Router();
@@ -46,5 +47,7 @@ router.post("/enroll/:courseId", auth, enrollInCourse);
 
 // Drop a course
 router.post("/drop/:courseId", auth, dropCourse);
+
+router.post("/recommendations", auth, getRecommendations);
 
 module.exports = router;
