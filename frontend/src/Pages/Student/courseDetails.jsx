@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const CourseDetails = () => {
     const navigate = useNavigate();
     
     const { id } = useParams(); // Get course ID from URL parameters
     const [course, setCourse] = useState(null);
+
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzUxNmQzNzIxNjJiZTc2NDA0NzYyOTQiLCJpYXQiOjE3MzMzOTA5OTIsImV4cCI6MTczMzM5NDU5Mn0.3AYS-CArjYZL2x7BgKhadz0N4gCEN2niOfnys8-kGg8";
 
     // Simulated function to fetch course details by ID
     const fetchCourseDetails = () => {
@@ -107,6 +110,26 @@ const CourseDetails = () => {
         setCourse(selectedCourse || null);
     };
 
+    // Enroll function that calls the API to enroll the student
+    const enrollInCourse = async (courseId) => {
+        try {
+            const response = await axios.post(
+                `http://localhost:5000/api/courses/enroll/${courseId}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            alert(response.data.msg); // Show success message
+            navigate(`/course/enrolled/${courseId}`); // Redirect to the enrolled page (optional)
+        } catch (err) {
+            console.error(err);
+            alert("Error enrolling in course");
+        }
+    };
+
     useEffect(() => {
         fetchCourseDetails(); // Fetch course when component loads
     }, [id]);
@@ -171,7 +194,7 @@ const CourseDetails = () => {
             <div className="flex justify-center">
                 <button
                     className="bg-gray-800 text-white px-6 py-3 rounded-lg hover:shadow-xl transition-all duration-300"
-                    onClick={() => navigate(`/course/enrolled/${course.id}`)}
+                    onClick={() => enrollInCourse(course.id)} // Call the enroll API when button is clicked
                 >
                     Enroll for Free
                 </button>
