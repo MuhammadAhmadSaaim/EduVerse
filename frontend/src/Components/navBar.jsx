@@ -1,7 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 
 const Navbar = () => {
+    const [role, setRole] = useState('');
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem("token");// Retrieve token from localStorage
+                // console.log(token);
+                const response = await axios.get("http://localhost:5000/api/user/getProfile", {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Add token to the Authorization header
+                    },
+                });
+                // console.log(response.data);
+                console.log(response.data.role);
+                setRole(response.data.role);
+                
+            } catch (error) {
+                console.error("Error fetching profile:", error);
+            }
+        };
+
+        fetchProfile();
+    }, []);
+
     const navigate = useNavigate();
 
     // State to toggle the dropdown visibility
@@ -10,6 +35,15 @@ const Navbar = () => {
     // Function to toggle the dropdown
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
+    };
+    const handleProfileClick = () => {
+        if (role === "instructor") navigate('/instructor/profile');
+        if (role === "student") navigate('/student/profile');
+        
+    };
+    const handleSignOut = () => {
+        localStorage.removeItem('token');
+        navigate('/login');
     };
 
     return (
@@ -31,10 +65,10 @@ const Navbar = () => {
 
                     {isDropdownOpen && (
                         <div className="absolute right-0 mt-2 bg-gray-800 rounded-md shadow-lg w-48">
-                            <ul className="text-white">
-                                <li className="px-4 py-2 hover:bg-gray-700 cursor-pointer">Profile</li>
-                                <li className="px-4 py-2 hover:bg-gray-700 cursor-pointer">Sign Out</li>
-                            </ul>
+                            <div className="flex flex-col">
+                                <button onClick={handleProfileClick} className="bg-gray-700 px-4 py-2 hover:bg-gray-600">Profile</button>
+                                <button onClick={handleSignOut} className="bg-gray-700 px-4 py-2 hover:bg-gray-600">Sign Out</button>
+                            </div>
                         </div>
                     )}
                 </div>

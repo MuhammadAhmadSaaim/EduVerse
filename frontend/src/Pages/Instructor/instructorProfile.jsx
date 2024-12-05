@@ -109,9 +109,9 @@ const InstructorProfile = () => {
         <div className="min-h-screen flex bg-gray-100">
             {/* Left Column */}
             <div className="w-1/4 bg-gray-100 flex flex-col justify-center items-center p-6">
-                {profile.profilePhoto ? (
+                {profilePhoto ? (
                     <img
-                        src={profile.profilePhoto}
+                        src={profilePhoto}
                         alt="Profile"
                         className="w-40 h-40 rounded-full border border-gray-300 mb-4 object-cover"
                     />
