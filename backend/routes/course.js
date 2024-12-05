@@ -9,7 +9,8 @@ const {
     updateCourse,
     deleteCourse,
     enrollInCourse,
-    dropCourse
+    dropCourse,
+    getStudentCourses
 } = require("../controllers/courseController");
 
 const router = express.Router();

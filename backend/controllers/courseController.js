@@ -58,7 +58,7 @@ const createCourse = async (req, res) => {
 const listCourses = async (req, res) => {
     try {
         const courses = await Course.find()
-            .select("title description thumbnail students instructor content") // Include content to calculate the count
+            .select("title description thumbnail students instructor content difficultyLevel") // Include content to calculate the count
             .populate("instructor", "username"); // Populate instructor name
 
         const formattedCourses = await Promise.all(
@@ -74,6 +74,8 @@ const listCourses = async (req, res) => {
                     studentCount: course.students.length, // Total number of students
                     instructor: course.instructor?.username, // Instructor's name
                     contentCount: course.content.length, // Accurate total number of content items
+                    students:course.students,
+                    difficultyLevel:course.difficultyLevel,
                 };
             })
         );
@@ -247,6 +249,7 @@ const dropCourse = async (req, res) => {
         res.status(500).json({ msg: "Error dropping course", error: err.message });
     }
 };
+
 
 module.exports = {
     createCourse,
