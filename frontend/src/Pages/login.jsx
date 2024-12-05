@@ -10,7 +10,7 @@ const Login = () => {
     const [password, setPassword] = useState("")
     const navigate = useNavigate();
     const backgroundStyle = {
-        backgroundImage: `url("/bg_image.jpg")`,
+        backgroundImage: `url("/bg_image2.jpg")`,
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
@@ -98,14 +98,14 @@ const Login = () => {
                             <div class="flex items-center">
                                 <input type="checkbox" id="remember"
                                     class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
-                                <label for="remember" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                                <label for="remember" class="ml-2 block text-sm text-gray-900">Remember me</label>
                             </div>
-                            <a href="#" class="text-sm text-blue-600 hover:underline">Forget Password?</a>
+                            <a href="#" class="text-sm text-gray-900 hover:underline">Forget Password?</a>
                         </div>
 
                         {/* <!-- Submit Button --> */}
                         <button type="submit" onClick={handleSubmit}
-                            className="w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">
+                            className="w-full bg-gray-900 hover:bg-gray-950 text-white font-semibold py-2 px-4 rounded shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">
                             Log In
 
                         </button>
@@ -114,7 +114,7 @@ const Login = () => {
                     <div>
                         <p className="text-center">
                             Don't have an account?{' '}
-                            <Link to="/register" className="text-blue-600 hover:underline">
+                            <Link to="/register" className="text-gray-900 hover:underline font-semibold">
                                 Register
                             </Link>
                         </p>
