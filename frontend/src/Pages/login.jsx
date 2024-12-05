@@ -30,9 +30,9 @@ const Login = () => {
                 localStorage.setItem('token', token);
                 // console.log("Token stored")
                 if (role === "student") {
-                    navigate("/student");
+                    navigate("/student/dashboard");
                 } else if (role === "instructor") {
-                    navigate("/instructor");
+                    navigate("/instructor/dashboard");
                 }
             }
             else {

@@ -22,7 +22,7 @@ function App() {
       <Layout className="bg-[#f0f8ff]">
         <Routes>
 
-          <Route path="/" element={<InstructorDashboard />} />   {/* make Login page */}
+          <Route path="/" element={<Login />} />   {/* make Login page */}
 
           {/* Login page route */}
           <Route path="/login" element={<Login />} />
