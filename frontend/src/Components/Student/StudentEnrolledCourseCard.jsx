@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const StudentEnrolledCourseCard = ({ course }) => {
     const navigate = useNavigate();
 
+    console.log(course.id);
    // Backend server base URL
    const backendBaseURL = "http://localhost:5000/"; // Update with your backend's base URL
 

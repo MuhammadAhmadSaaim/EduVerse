@@ -1,114 +1,47 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const EnrolledCourseDetails = () => {
   const navigate = useNavigate();
-
   const { id } = useParams(); // Get course ID from URL parameters
+  console.log(id);
   const [course, setCourse] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0); // Track current lesson index
 
-  // Simulated function to fetch course details by ID
-  const fetchCourseDetails = () => {
-    const allCourses = [
-      {
-        id: "641e9b7e4e8c1e1234567890",
-        title: "Introduction to Programming",
-        description: "Learn the basics of programming using JavaScript.",
-        instructor: {
-          id: "641e9b7e4e8c1e1234567891",
-          name: "John Doe",
-        },
-        thumbnail:
-          "https://cdn.shopaccino.com/igmguru/articles/deep-learning-900x506.jpg",
-        difficultyLevel: "easy",
-        whatYoullLearn: [
-          "Understand basic programming concepts",
-          "Write simple JavaScript programs",
-          "Debug and test your code",
-        ],
-        content: [
-          {
-            id: "641e9b7e4e8c1e1234567892",
-            title: "Introduction",
-            videoUrl: "https://www.youtube.com/embed/NArVyt8t-z4",
-          },
-          {
-            id: "641e9b7e4e8c1e1234567893",
-            title: "Getting Started with JavaScript",
-            videoUrl: "https://www.youtube.com/watch?v=9MEAQqCHqcc",
-          },
-        ],
-        students: [
-          {
-            id: "641e9b7e4e8c1e1234567894",
-            name: "Saba Shafique",
-          },
-        ],
-        progress: [
-          {
-            student: {
-              id: "641e9b7e4e8c1e1234567894",
-              name: "Saba Shafique",
-            },
-            completedContentIds: ["641e9b7e4e8c1e1234567892"],
-            remainingContentIds: ["641e9b7e4e8c1e1234567893"],
-          },
-        ],
-      },
-      {
-        id: "641e9b7e4e8c1e1234567895",
-        title: "Advanced Web Development",
-        description: "Master front-end and back-end web development.",
-        instructor: {
-          id: "641e9b7e4e8c1e1234567896",
-          name: "Jane Smith",
-        },
-        thumbnail:
-          "https://cdn.shopaccino.com/igmguru/articles/deep-learning-900x506.jpg",
-        difficultyLevel: "hard",
-        whatYoullLearn: [
-          "Build full-stack web applications",
-          "Learn React, Node.js, and MongoDB",
-          "Deploy your projects to production",
-        ],
-        content: [
-          {
-            id: "641e9b7e4e8c1e1234567897",
-            title: "React Basics",
-            videoUrl: "https://sample-videos.com/video3",
-          },
-          {
-            id: "641e9b7e4e8c1e1234567898",
-            title: "Backend with Node.js",
-            videoUrl: "https://sample-videos.com/video4",
-          },
-        ],
-        students: [
-          {
-            id: "641e9b7e4e8c1e1234567899",
-            name: "Ali Ahmed",
-          },
-        ],
-        progress: [
-          {
-            student: {
-              id: "641e9b7e4e8c1e1234567894",
-              name: "Saba Shafique",
-            },
-            completedContentIds: ["641e9b7e4e8c1e1234567897"],
-            remainingContentIds: ["641e9b7e4e8c1e1234567898"],
-          },
-        ],
-      },
-    ];
+  const token = localStorage.getItem("token");
 
-    const selectedCourse = allCourses.find((course) => course.id === id);
-    setCourse(selectedCourse || null);
+  const fetchCourseDetails = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/courses/enrolled-course/${id}`, // Backend API endpoint for enrolled course
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const fetchedCourse = response.data;
+      setCourse(response.data); // Update state with the fetched course details
+      // Backend server base URL
+      const backendBaseURL = "http://localhost:5000/"; // Update with your backend's base URL
+
+      // Construct full image URL if needed
+      const courseImageUrl = fetchedCourse.thumbnail?.startsWith("http")
+        ? fetchedCourse.thumbnail // Use the full URL if it's already provided
+        : `${backendBaseURL}${fetchedCourse.thumbnail?.replace(/\\/g, "/")}`; // Replace backslashes with forward slashes
+
+      setImageUrl(courseImageUrl);
+
+    } catch (err) {
+      console.error(err);
+      alert("Error fetching enrolled course details");
+    }
   };
 
   useEffect(() => {
-    fetchCourseDetails(); // Fetch course when component loads
+    fetchCourseDetails(); // Fetch course details on component load
   }, [id]);
 
   const handlePreviousLesson = () => {
@@ -123,23 +56,53 @@ const EnrolledCourseDetails = () => {
     }
   };
 
-  const handleMarkAsDone = () => {
-    console.log(
-      `Lesson "${course.content[currentLessonIndex].title}" marked as done!`
-    );
+  const handleMarkAsDone = async () => {
+    try {
+      await axios.post(
+        `http://localhost:5000/api/courses/mark-as-done`,
+        {
+          courseId: id,
+          contentId: course.content[currentLessonIndex].id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert(
+        `Lesson "${course.content[currentLessonIndex].title}" marked as done!`
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Error marking lesson as done");
+    }
   };
 
-  const handleUnenroll = () => {
+  const handleUnenroll = async () => {
     const confirmed = window.confirm(
       "Are you sure you want to unenroll from this course?"
     );
     if (confirmed) {
-      navigate("/student/dashboard");
+      try {
+        await axios.post(
+          `http://localhost:5000/api/courses/drop/${id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        navigate("/student/dashboard");
+      } catch (err) {
+        console.error(err);
+        alert("Error unenrolling from course");
+      }
     }
-    // If not confirmed, stay on the current page (default behavior)
   };
 
-  if (!course) {
+  if (!course || !imageUrl) {
     return (
       <div className="p-6 text-center text-red-500 font-semibold">
         Details not found!
@@ -149,11 +112,17 @@ const EnrolledCourseDetails = () => {
 
   const currentLesson = course.content[currentLessonIndex];
 
+  const getVideoId = (url) => {
+    const match = url.match(
+      /(?:youtube\.com\/(?:[^\/]+\/[^\/]+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+    );
+    return match ? match[1] : null;
+  };
+
   return (
     <div className="p-8 bg-blue-50 rounded-lg shadow-xl w-4/5 max-w-4xl mx-auto">
       {/* Combined Card for Course Title, Thumbnail, and Difficulty Level */}
       <div className="p-6 bg-gray-900 text-white shadow-md rounded-lg mb-6">
-        {/* Course Title and Thumbnail */}
         <div className="flex items-center mb-6">
           <div className="flex-1">
             <h1 className="text-3xl font-semibold mb-2">{course.title}</h1>
@@ -161,13 +130,12 @@ const EnrolledCourseDetails = () => {
           </div>
           <div className="flex-shrink-0 ml-6">
             <img
-              src={course.thumbnail}
+              src={imageUrl}
               alt={course.title}
               className="w-48 h-48 object-cover rounded-lg shadow-md"
             />
           </div>
         </div>
-
         <div className="flex items-center justify-between mt-4">
           <div>
             <p className="text-sm font-semibold text-gray-300">
@@ -189,21 +157,19 @@ const EnrolledCourseDetails = () => {
             Unenroll
           </button>
         </div>
-        
       </div>
 
       {/* Course Content Section */}
       <div className="bg-gray-900 p-4 rounded-lg text-white shadow-md">
-        {/* Top Bar */}
         <div className="bg-gray-800 text-white text-lg font-bold p-2 rounded-t-md pl-5">
           {currentLesson.title}
         </div>
-
-        {/* Video Container */}
         <div className="flex justify-center items-center my-1">
           <div className="h-64 sm:h-80 lg:h-96 w-full flex justify-center items-center rounded-lg shadow-lg">
             <iframe
-              src={`${currentLesson.videoUrl}?autoplay=0&showinfo=0&controls=1`}
+              src={`https://www.youtube.com/embed/${getVideoId(
+                currentLesson.videoUrl
+              )}?autoplay=0&showinfo=0&controls=1`}
               title={currentLesson.title}
               className="w-[90%] h-5/6 rounded-md"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -211,10 +177,7 @@ const EnrolledCourseDetails = () => {
             ></iframe>
           </div>
         </div>
-
-        {/* Navigation Bar */}
         <div className="flex">
-          {/* Previous Button */}
           <button
             onClick={handlePreviousLesson}
             disabled={currentLessonIndex === 0}
@@ -226,16 +189,12 @@ const EnrolledCourseDetails = () => {
           >
             Previous
           </button>
-
-          {/* Mark as Done Button */}
           <button
             onClick={handleMarkAsDone}
             className="flex-1 bg-blue-500 hover:bg-blue-600 text-white p-4 text-lg font-semibold"
           >
             Mark as Done
           </button>
-
-          {/* Next Button */}
           <button
             onClick={handleNextLesson}
             disabled={currentLessonIndex === course.content.length - 1}

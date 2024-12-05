@@ -126,6 +126,90 @@ const getCourse = async (req, res) => {
     }
 };
 
+// Get course detail by ID (FOR STUDENT "NEW COURSE")
+const getCourseDetail = async (req, res) => {
+    const { courseId } = req.params;
+
+    try {
+        const course = await Course.findById(courseId)
+            .populate("instructor", "username")
+            .populate("content", "title videoUrl type description thumbnail")
+            .populate("students", "username email role");
+
+        if (!course) {
+            return res.status(404).json({ msg: "Course not found" });
+        }
+
+        // Format the response to match the frontend needs
+        const courseDetails = {
+            id: course._id,
+            title: course.title,
+            description: course.description,
+            instructor: {
+                name: course.instructor.username,
+            },
+            thumbnail: course.thumbnail,
+            difficultyLevel: course.difficultyLevel,
+            whatYoullLearn: course.whatYoullLearn || [],
+            content: course.content.map(item => ({
+                id: item._id,
+                title: item.title,
+                videoUrl: item.videoUrl,
+            })),
+            students: course.students.map(student => ({
+                id: student._id,
+                name: student.username,
+            })),
+            studentCount: course.students.length, // Add student count
+        };
+
+        res.status(200).json(courseDetails);
+    } catch (err) {
+        res.status(500).json({ msg: "Error retrieving course details", error: err.message });
+    }
+};
+
+// Get course detail by id (FOR STUDENT "MY COURSE")
+const getEnrolledCourse = async (req, res) => {
+    const { courseId } = req.params;
+
+    try {
+        const course = await Course.findById(courseId)
+            .populate("instructor", "username")
+            .populate("content", "title videoUrl type description thumbnail")
+            .populate("students", "username email role");
+
+        if (!course) {
+            return res.status(404).json({ msg: "Course not found" });
+        }
+
+        const enrolledCourseDetails = {
+            id: course._id,
+            title: course.title,
+            description: course.description,
+            instructor: {
+                name: course.instructor.username,
+            },
+            thumbnail: course.thumbnail,
+            difficultyLevel: course.difficultyLevel,
+            whatYoullLearn: course.whatYoullLearn || [],
+            content: course.content.map(item => ({
+                id: item._id,
+                title: item.title,
+                videoUrl: item.videoUrl,
+            })),
+            students: course.students.map(student => ({
+                id: student._id,
+                name: student.username,
+            })),
+        };
+
+        res.status(200).json(enrolledCourseDetails);
+    } catch (err) {
+        res.status(500).json({ msg: "Error retrieving enrolled course details", error: err.message });
+    }
+};
+
 
 // Update a course
 const updateCourse = async (req, res) => {
@@ -235,7 +319,7 @@ const enrollInCourse = async (req, res) => {
     } catch (err) {
         res.status(500).json({ msg: "Error enrolling in course", error: err.message });
     }
-};
+};  
 
 // Drop a course
 const dropCourse = async (req, res) => {
@@ -294,4 +378,6 @@ module.exports = {
     enrollInCourse,
     dropCourse,
     getRecommendations,
+    getCourseDetail,
+    getEnrolledCourse,
 };
