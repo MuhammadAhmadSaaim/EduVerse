@@ -82,7 +82,7 @@ const CreateCourse = () => {
             const response = await axios.post("http://localhost:5000/api/courses/create", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzUwYTYzY2Q2NzQ0MDIxZjIwZDdhOGYiLCJpYXQiOjE3MzMzMzg2ODQsImV4cCI6MTczMzM0MjI4NH0.IhOpwAx4TQjVYElo6NTspQnvQd5fMAzQrXjpua8xfvE", // Make sure the token is dynamic or correct
+                    "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzUwYTYzY2Q2NzQ0MDIxZjIwZDdhOGYiLCJpYXQiOjE3MzMzODY5NzMsImV4cCI6MTczMzM5MDU3M30.3rYFLc1s5KLYRjAUjD9PS2eUEEVCAXEpn5pcAeGb8co",
                 },
             });
             console.log("Course created:", response.data);
@@ -100,8 +100,8 @@ const CreateCourse = () => {
     };
 
     return (
-        <div className="w-4/5 my-10 mx-auto p-8 bg-gray-100 rounded-lg">
-            <h1 className="text-4xl font-semibold text-gray-800 mb-8 text-center">Create New Course</h1>
+        <div className="w-4/5 my-10 mx-auto p-8 bg-gray-800 rounded-lg">
+            <h1 className="text-4xl font-semibold text-white mb-8 text-center">Create New Course</h1>
             <form onSubmit={handleSubmit}>
 
                 {/* Course Info Section */}
@@ -132,15 +132,7 @@ const CreateCourse = () => {
                     </label>
                     <label className="block mb-4">
                         <span className="text-gray-700 font-semibold">Course Thumbnail:</span>
-                        <div className="flex items-center space-x-4">
-                            <input
-                                type="text"
-                                name="image"
-                                value={courseData.image}
-                                onChange={handleChange}
-                                className="block w-full border rounded-lg p-3"
-                                placeholder="Enter image URL"
-                            />
+                        <div className="items-center space-x-4">
                             <input
                                 type="file"
                                 onChange={handleImageUpload}
@@ -269,7 +261,7 @@ const CreateCourse = () => {
                 {/* Submit Button */}
                 <button
                     type="submit"
-                    className="w-full bg-gray-800 text-white font-semibold py-3 rounded-lg hover:bg-black transition duration-200"
+                    className="w-full text-gray-800 bg-white font-semibold py-3 rounded-lg hover:bg-gray-200 transition duration-200"
                 >
                     Create Course
                 </button>

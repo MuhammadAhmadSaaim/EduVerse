@@ -17,7 +17,8 @@ const Navbar = () => {
             <div className="flex justify-between items-center">
                 {/* Centered App Name */}
                 <div onClick={() => navigate('/')}
-                    className="text-2xl font-bold">EduVerse</div>
+                    className="text-2xl font-bold hover:cursor-pointer
+                    ">EduVerse</div>
 
                 {/* Dropdown on the right */}
                 <div className="relative">
