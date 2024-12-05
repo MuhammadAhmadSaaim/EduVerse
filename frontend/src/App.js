@@ -21,6 +21,7 @@ function App() {
     <Router>
       <Layout className="bg-[#f0f8ff]">
         <Routes>
+
           <Route path="/" element={<InstructorDashboard />} />   {/* make Login page */}
 
           {/* Login page route */}
