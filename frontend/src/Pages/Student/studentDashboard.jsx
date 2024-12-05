@@ -10,33 +10,34 @@ const StudentDashboard = () => {
   const studentId = "67516d372162be7640476294"; // Sample student ID
 
   const [courses, setCourses] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    // Fetch courses from the backend
-    useEffect(() => {
-        const fetchCourses = async () => {
-            try {
-                const response = await axios.get("http://localhost:5000/api/courses", {
-                    headers: {
-                        "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzUwYTYzY2Q2NzQ0MDIxZjIwZDdhOGYiLCJpYXQiOjE3MzMzODY5NzMsImV4cCI6MTczMzM5MDU3M30.3rYFLc1s5KLYRjAUjD9PS2eUEEVCAXEpn5pcAeGb8co",
-                    },
-                });
-                setCourses(response.data);
-                console.log(response.data);
-            } catch (err) {
-                setError("Failed to fetch courses. Please try again.");
-            } finally {
-                setLoading(false);
-            }
-        };
+  // Fetch courses from the backend
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/courses", {
+          headers: {
+            "x-auth-token":
+              "eeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzUxNmQzNzIxNjJiZTc2NDA0NzYyOTQiLCJpYXQiOjE3MzM0MTU4MjMsImV4cCI6MTczMzQ0NDYyM30.yAHQ-DKFTCuDE2313QDYycQV-W55MqWOdRr6JJ6yTTQ",
+          },
+        });
+        setCourses(response.data);
+        console.log(response.data);
+      } catch (err) {
+        setError("Failed to fetch courses. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        fetchCourses();
-    }, []);
+    fetchCourses();
+  }, []);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
-    
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
   // Filter courses where the student is enrolled
   const myCourses = courses.filter((course) =>
     course.students.some((student) => student.toString() === studentId)
@@ -44,7 +45,8 @@ const StudentDashboard = () => {
 
   // Filter courses that the student is NOT enrolled in (New Courses)
   const newCourses = courses.filter(
-    (course) => !course.students.some((student) => student.toString() === studentId)
+    (course) =>
+      !course.students.some((student) => student.toString() === studentId)
   );
 
   if (loading) {

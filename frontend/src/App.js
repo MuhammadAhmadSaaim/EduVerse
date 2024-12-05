@@ -22,13 +22,11 @@ function App() {
       <Layout className="bg-[#f0f8ff]">
         <Routes>
 
-          <Route path="/" element={<InstructorDashboard />} />   {/* make Login page */}
+          <Route path="/" element={<StudentDashboard />} />   {/* make Login page */}
 
           {/* Login page route */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
-          <Route path="/" element={<InstructorDashboard />} />
 
 
           {/* Instructor routes */}
