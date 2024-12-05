@@ -7,8 +7,8 @@ const CourseSchema = new mongoose.Schema({
     difficultyLevel: { type: String, enum: ["easy", "medium", "hard"], required: true },
     content: [{ type: mongoose.Schema.Types.ObjectId, ref: "Content" }], // Array of references to Content documents
     students: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    whatYoullLearn: [{ type: String }], // Array of learning points
-    thumbnail: { type: String }, // URL or path for the course thumbnail image
+    whatYoullLearn: [{ type: String }],
+    thumbnail: { type: String },
     progress: [
         {
             student: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

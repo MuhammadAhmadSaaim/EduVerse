@@ -2,14 +2,14 @@ const Content = require("../models/Content");
 
 // Create new content
 const createContent = async (req, res) => {
-    const { title, videoUrl, duration, type, description } = req.body;
+    const { title, videoUrl, duration, type, description, thumbnail } = req.body;
 
     try {
-        const newContent = new Content({ title, videoUrl, duration, type, description });
+        const newContent = new Content({ title, videoUrl, duration, type, description, thumbnail });
         await newContent.save();
         res.status(201).json(newContent);
     } catch (err) {
-        res.status(500).json({ msg: "Server error" });
+        res.status(500).json({ msg: "Error creating content", error: err.message });
     }
 };
 
@@ -19,7 +19,7 @@ const listContent = async (req, res) => {
         const contentItems = await Content.find();
         res.status(200).json(contentItems);
     } catch (err) {
-        res.status(500).json({ msg: "Server error" });
+        res.status(500).json({ msg: "Error retrieving content", error: err.message });
     }
 };
 
@@ -32,29 +32,31 @@ const getContentById = async (req, res) => {
         if (!content) return res.status(404).json({ msg: "Content not found" });
         res.status(200).json(content);
     } catch (err) {
-        res.status(500).json({ msg: "Server error" });
+        res.status(500).json({ msg: "Error retrieving content", error: err.message });
     }
 };
 
 // Update content by ID
 const updateContent = async (req, res) => {
     const { contentId } = req.params;
-    const { title, videoUrl, duration, type, description } = req.body;
+    const { title, videoUrl, duration, type, description, thumbnail } = req.body;
 
     try {
         const content = await Content.findById(contentId);
         if (!content) return res.status(404).json({ msg: "Content not found" });
 
+        // Update only provided fields
         content.title = title || content.title;
         content.videoUrl = videoUrl || content.videoUrl;
         content.duration = duration || content.duration;
         content.type = type || content.type;
         content.description = description || content.description;
+        content.thumbnail = thumbnail || content.thumbnail;
 
         await content.save();
         res.status(200).json(content);
     } catch (err) {
-        res.status(500).json({ msg: "Server error" });
+        res.status(500).json({ msg: "Error updating content", error: err.message });
     }
 };
 
@@ -66,10 +68,10 @@ const deleteContent = async (req, res) => {
         const content = await Content.findById(contentId);
         if (!content) return res.status(404).json({ msg: "Content not found" });
 
-        await content.remove();
+        await content.deleteOne();
         res.status(200).json({ msg: "Content deleted successfully" });
     } catch (err) {
-        res.status(500).json({ msg: "Server error" });
+        res.status(500).json({ msg: "Error deleting content", error: err.message });
     }
 };
 
@@ -78,5 +80,5 @@ module.exports = {
     listContent,
     getContentById,
     updateContent,
-    deleteContent
+    deleteContent,
 };
