@@ -4,7 +4,7 @@ const Course = require("../models/Course");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const axios = require("axios");
 const express = require("express");
-const app=express();
+const app = express();
 app.use(express.json()); // Parse JSON body
 
 const Content = require('../models/Content');
@@ -82,8 +82,8 @@ const listCourses = async (req, res) => {
                     studentCount: course.students.length, // Total number of students
                     instructor: course.instructor?.username, // Instructor's name
                     contentCount: course.content.length, // Accurate total number of content items
-                    students:course.students,
-                    difficultyLevel:course.difficultyLevel,
+                    students: course.students,
+                    difficultyLevel: course.difficultyLevel,
                 };
             })
         );
@@ -348,25 +348,25 @@ const getRecommendations = async (req, res) => {
     // console.log("Received hobbies:", hobbies);
     const geminiApiKey = process.env.GOOGLE_API_KEY;
     // console.log("Gemini API Key:", geminiApiKey);
-    if(hobbies){
+    if (hobbies) {
         try {
             const genAI = await new GoogleGenerativeAI(geminiApiKey);
             const model = await genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-            const hobbiesnew = hobbies.split(",");
+            const hobbiesnew = hobbies.join(",");
             const prompt = `Suggest 3 subjects related to ${hobbiesnew}. Only give me names separated by commas. Nothing else.`
             const result = await model.generateContent(prompt);
             const text = await result.response.text();
             let textArray = text.split(",");
             // console.log(text)
-            res.status(200).json(textArray);
+            res.status(200).json(textArray);               
         } catch (error) {
             console.error("Error fetching recommendations:", error);
             res.status(500).json({ error: "Failed to fetch recommendations" });
         }
-    }else{
+    } else {
         res.status(500).json({ error: "Failed to fetch recommendations because of no hobbies" });
     }
-    
+
 }
 
 module.exports = {

@@ -130,7 +130,7 @@ const InstructorDashboard = () => {
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold">My Courses</h2>
                 <button
-                    className="bg-gray-800 text-white px-4 py-2 rounded-md"
+                    className="bg-gray-800 text-white px-4 py-2 rounded-md hover:shadow-lg"
                     onClick={() => navigate('/course/create')}
                 >
                     Add Course
@@ -139,7 +139,7 @@ const InstructorDashboard = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
                 {courses.map(course => (
-                    <CourseCard key={course._id} course={course} />
+                    <CourseCard key={course.id} course={course} />
                 ))}
             </div>
             <hr className="border-gray-300 my-6" />

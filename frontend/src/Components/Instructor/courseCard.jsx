@@ -37,7 +37,7 @@ const CourseCard = ({ course }) => {
             {/* View More */}
             <button
                 className="bg-gray-800 text-white px-3 py-1 rounded mt-4 justify-center w-full hover:shadow-xl transition duration-200 cursor-pointer"
-                onClick={() => navigate(`/editcourse/${course._id}`)} // Navigate to course details page
+                onClick={() => navigate(`/editcourse/${course.id}`)} // Navigate to course details page
             >
                 View Details
             </button>

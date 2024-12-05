@@ -1,49 +1,70 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const EditCourse = () => {
-    const initialCourseData = {
-        title: "React for Beginners",
-        description: "Learn the basics of React.js from scratch.",
-        image: "https://cdn.shopaccino.com/igmguru/articles/deep-learning-900x506.jpg",
-        whatYoullLearn: ["Understand React components", "State management in React"],
-        difficultyLevel: "Beginner",
-        content: [
-            {
-                type: "video",
-                thumbnail: "https://cdn.shopaccino.com/igmguru/articles/deep-learning-900x506.jpg", // Placeholder for thumbnail
-                title: "Introduction to React",
-            },
-            {
-                type: "quiz",
-                link: "https://google-form.com/quiz-1",
-                title: "React Basics Quiz",
-            },
-        ],
-        students: ["Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Hank"],
-    };
+    const { id } = useParams(); // Get course ID from URL
 
-    const [courseData, setCourseData] = useState(initialCourseData);
+    const navigate = useNavigate();
+
+    const token = localStorage.getItem("token");
+    const [course, setcourse] = useState(null);
     const [editMode, setEditMode] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [imageUrl, setImageUrl] = useState("");
+
+
+    useEffect(() => {
+        // Fetch course data
+        const fetchcourse = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/api/courses/${id}`);
+                setcourse(response.data);
+                console.log(response.data);
+                setLoading(false);
+            } catch (err) {
+                setError(err.response?.data?.msg || "Error fetching course data");
+                console.log(err);
+                setLoading(false);
+            }
+        };
+        fetchcourse();
+    }, [id]);
+
+    // Update imageUrl when course data changes
+    useEffect(() => {
+        if (course && course.thumbnail) {
+            const backendBaseURL = "http://localhost:5000/"; // Update with your backend's base URL
+            const constructedImageUrl = course.thumbnail.startsWith("http")
+                ? course.thumbnail
+                : `${backendBaseURL}${course.thumbnail.replace(/\\/g, "/")}`;
+            setImageUrl(constructedImageUrl);
+        }
+    }, [course]);
+
+    if (loading) return <div>Loading...</div>;
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setCourseData({ ...courseData, [name]: value });
+        setcourse({ ...course, [name]: value });
     };
 
     const handleWhatYouLearnChange = (index, value) => {
-        const updatedPoints = [...courseData.whatYoullLearn];
+        const updatedPoints = [...course.whatYoullLearn];
         updatedPoints[index] = value;
-        setCourseData({ ...courseData, whatYoullLearn: updatedPoints });
+        setcourse({ ...course, whatYoullLearn: updatedPoints });
     };
 
     const addWhatYouLearnPoint = () => {
-        setCourseData({ ...courseData, whatYoullLearn: [...courseData.whatYoullLearn, ""] });
+        setcourse({ ...course, whatYoullLearn: [...course.whatYoullLearn, ""] });
     };
 
     const handleContentChange = (index, key, value) => {
-        const updatedContent = [...courseData.content];
+        const updatedContent = [...course.content];
         updatedContent[index][key] = value; // Supports "url", "thumbnail", "title"
-        setCourseData({ ...courseData, content: updatedContent });
+        setcourse({ ...course, content: updatedContent });
     };
 
 
@@ -52,22 +73,106 @@ const EditCourse = () => {
             type === "video"
                 ? { type: "video", thumbnail: "", title: "", url: "" } // Added "url" for videos
                 : { type: "quiz", link: "", title: "" };
-        setCourseData({ ...courseData, content: [...courseData.content, newContent] });
+        setcourse({ ...course, content: [...course.content, newContent] });
     };
 
     const handleDeleteContent = (index) => {
-        const updatedContent = courseData.content.filter((_, i) => i !== index);
-        setCourseData({ ...courseData, content: updatedContent });
+        const updatedContent = course.content.filter((_, i) => i !== index);
+        setcourse({ ...course, content: updatedContent });
     };
 
     const toggleEditMode = () => {
         setEditMode(!editMode);
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Updated Course Data:", courseData);
+    const deleteCourse = async () => {
+        // Confirm before deleting the course
+        const isConfirmed = window.confirm("Are you sure you want to delete this course?");
+
+        if (!isConfirmed) {
+            return; // If user cancels, do nothing
+        }
+
+        try {
+            await axios.delete(`http://localhost:5000/api/courses/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            alert("Course deleted successfully");
+            navigate("/instructor/dashboard");
+
+        } catch (err) {
+            setError(err.response?.data?.msg || "Error deleting course");
+        }
     };
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            // Step 1: Separate new and existing content
+            const newContent = course.content.filter((item) => !item._id);
+            const existingContent = course.content.filter((item) => item._id);
+
+            // Step 2: Create new content
+            const newContentIds = [];
+            for (const item of newContent) {
+                const { data } = await axios.post(
+                    "http://localhost:5000/api/content/create",
+                    {
+                        title: item.title,
+                        videoUrl: item.url,
+                        type: item.type,
+                        description: item.description,
+                        thumbnail: item.thumbnail,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+                newContentIds.push(data._id);
+            }
+
+            // Step 3: Prepare the updated course data
+            const updatedCourse = {
+                title: course.title,
+                description: course.description,
+                whatYoullLearn: course.whatYoullLearn,
+                thumbnail: course.thumbnail,
+                difficultyLevel: course.difficultyLevel,
+                content: [...existingContent.map((item) => item._id), ...newContentIds],
+                updatedContent: existingContent.map((item) => ({
+                    contentId: item._id,
+                    title: item.title,
+                    videoUrl: item.url,
+                    thumbnail: item.thumbnail,
+                    description: item.description,
+                    type: item.type,
+                })),
+            };
+
+            // Step 4: Update the course
+            await axios.put(
+                `http://localhost:5000/api/courses/${id}`,
+                updatedCourse,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            alert("Course updated successfully");
+            navigate("/instructor/dashboard");
+        } catch (err) {
+            setError(err.response?.data?.msg || "Error updating course");
+        }
+    };
+
 
     return (
         <div className="p-8 min-h-screen text-[#f0f8ff] w-4/5 mx-auto">
@@ -84,7 +189,7 @@ const EditCourse = () => {
                                 <input
                                     type="text"
                                     name="title"
-                                    value={courseData.title}
+                                    value={course.title}
                                     onChange={handleChange}
                                     className="block w-full bg-gray-700 border-none rounded-md p-2 text-gray-200"
                                 />
@@ -93,7 +198,7 @@ const EditCourse = () => {
                                 <span className="text-gray-300">Description:</span>
                                 <textarea
                                     name="description"
-                                    value={courseData.description}
+                                    value={course.description}
                                     onChange={handleChange}
                                     className="block w-full bg-gray-700 border-none rounded-md p-2 text-gray-200"
                                 />
@@ -102,7 +207,7 @@ const EditCourse = () => {
                                 <span className="text-gray-300">Difficulty Level:</span>
                                 <select
                                     name="difficultyLevel"
-                                    value={courseData.difficultyLevel}
+                                    value={course.difficultyLevel}
                                     onChange={handleChange}
                                     className="block w-full bg-gray-700 border-none rounded-md p-2 text-gray-200"
                                 >
@@ -117,16 +222,8 @@ const EditCourse = () => {
                         {/* Image Upload */}
                         <div className="p-4 bg-gray-900 shadow-md rounded-lg">
                             <h2 className="text-xl font-semibold mb-4">Course Image</h2>
-                            <input
-                                type="text"
-                                name="image"
-                                value={courseData.image}
-                                onChange={handleChange}
-                                className="block w-full bg-gray-700 border-none rounded-md p-2 text-gray-200 mb-2"
-                                placeholder="Enter image URL"
-                            />
                             <img
-                                src={courseData.image}
+                                src={imageUrl}
                                 alt="Course Preview"
                                 className="w-full h-40 object-cover rounded-md"
                             />
@@ -138,7 +235,7 @@ const EditCourse = () => {
                         {/* What You'll Learn */}
                         <div className="p-4 bg-gray-900 shadow-md rounded-lg">
                             <h2 className="text-xl font-semibold mb-4">What You'll Learn</h2>
-                            {courseData.whatYoullLearn.map((point, index) => (
+                            {course.whatYoullLearn.map((point, index) => (
                                 <div key={index} className="mb-2">
                                     <input
                                         type="text"
@@ -160,21 +257,31 @@ const EditCourse = () => {
                         {/* Students Enrolled */}
                         <div className="p-4 bg-gray-900 shadow-md rounded-lg">
                             <h2 className="text-xl font-semibold mb-4 text-gray-100">Students Enrolled</h2>
-                            <p className="text-gray-300 mb-4">Total Students: {initialCourseData.students.length}</p>
+                            <p className="text-gray-300 mb-4">Total Students: {course.students.length}</p>
                             <div
                                 className="overflow-y-auto max-h-40 border-t border-gray-700 pt-2"
                                 style={{ scrollbarWidth: "thin", scrollbarColor: "#4A5568 #2D3748" }}
                             >
-                                {initialCourseData.students.map((student, index) => (
+                                {course.students.map((student, index) => (
                                     <div
                                         key={index}
-                                        className={"bg-gray-700 text-gray-200 p-2 rounded mb-2 shadow-sm"}
+                                        className="bg-gray-700 text-gray-200 p-2 rounded mb-2 shadow-sm"
                                     >
-                                        {student}
+                                        {student.username} - {student.email}
                                     </div>
                                 ))}
                             </div>
                         </div>
+
+                        {/* Delete Course Button */}
+                        <button
+                            type="button"
+                            onClick={deleteCourse}
+                            className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-red-600 w-full"
+                        >
+                            Delete Course
+                        </button>
+
                     </div>
                 </div>
 
@@ -182,7 +289,7 @@ const EditCourse = () => {
                 <div className="mt-6">
                     <div className="p-4 bg-gray-900 shadow-md rounded-lg">
                         <h2 className="text-xl font-semibold mb-4">Course Content</h2>
-                        {courseData.content.map((item, index) => (
+                        {course.content.map((item, index) => (
                             <div
                                 key={index}
                                 className="p-4 bg-gray-700 rounded-md mb-4 flex items-center justify-between gap-4"
@@ -220,13 +327,14 @@ const EditCourse = () => {
                                                     />
                                                     <input
                                                         type="text"
-                                                        value={item.url}
+                                                        value={item.videoUrl} // Incorrect property name
                                                         onChange={(e) =>
-                                                            handleContentChange(index, "url", e.target.value)
+                                                            handleContentChange(index, "url", e.target.value) // "url" is the correct property
                                                         }
                                                         className="bg-gray-600 border-none rounded-md p-2 text-gray-200"
                                                         placeholder="Edit Video URL"
                                                     />
+
                                                 </div>
                                             )}
                                         </div>
@@ -279,7 +387,7 @@ const EditCourse = () => {
                     <button
                         type="submit"
                         onClick={handleSubmit}
-                        className="px-6 py-3 bg-green-500 text-white rounded-md hover:bg-green-600"
+                        className="px-6 py-3 bg-gray-900 text-white rounded-md hover:bg-black"
                     >
                         Save Changes
                     </button>
