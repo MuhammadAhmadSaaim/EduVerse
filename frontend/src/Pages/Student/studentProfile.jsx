@@ -13,6 +13,7 @@ const StudentProfile = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [hobbies, setHobbies] = useState("");
     const [email, setEmail] = useState("");
+    const [profilePhoto,setProfilePhoto] = useState(null);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [courses, setCourses] = useState([]); // State for enrolled courses
@@ -30,11 +31,13 @@ const StudentProfile = () => {
                         Authorization: `Bearer ${token}`, // Add token to the Authorization header
                     },
                 });
-                console.log(response.data);
+                // console.log(response.data);
                 setPassword(response.data.password); // Update state with profile data
                 setEmail(response.data.email);
                 setHobbies(response.data.hobbies);
                 setUsername(response.data.username);
+                setProfilePhoto(response.data.profilePhoto);
+                
             } catch (error) {
                 console.error("Error fetching profile:", error);
             }
@@ -85,13 +88,13 @@ const StudentProfile = () => {
 
     // Handle recommendations fetch
     const handleGetRecommendations = async () => {
-        console.log("Hobbies:", hobbies);
+        // console.log("Hobbies:", hobbies);
         if (!hobbies) {
             alert("Please fill in your hobbies before getting recommendations.");
             return;
         }
-        
-        console.log("Hobbies before making API call:", hobbies);
+
+        //console.log("Hobbies before making API call:", hobbies);
 
         setLoadingRecommendations(true);
         try {
@@ -121,15 +124,14 @@ const StudentProfile = () => {
 
     // Handle profile photo file upload
     const handleFileChange = (e) => {
-        const selectedFile = e.target.files[0]; // Declare the selected file
-        setSelectedFile(selectedFile);
-
-        // Create a FileReader to preview the image
-        const reader = new FileReader();
-        reader.onload = () => {
-            setProfile({ ...profile, profilePhoto: reader.result });
-        };
-        reader.readAsDataURL(selectedFile); // Use the selected file here
+        const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setProfilePhoto(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
     };
 
 
@@ -154,8 +156,10 @@ const StudentProfile = () => {
                 email,
                 hobbies,
                 password,
-                profilePhoto: selectedFile ? selectedFile : null,
+                profilePhoto: profilePhoto || selectedFile ? profilePhoto : null,
+
             };
+            //console.log(payload.profilePhoto);
             const token = localStorage.getItem("token");
             await axios.put("http://localhost:5000/api/user/updateProfile", payload, {
                 headers: {
@@ -174,16 +178,16 @@ const StudentProfile = () => {
         <div className="min-h-screen flex bg-gray-100">
             {/* Left Column */}
             <div className="w-1/4 bg-gray-100 flex flex-col justify-center items-center p-6">
-                {profile.profilePhoto ? (
+                {profilePhoto ? (
                     <img
-                        src={profile.profilePhoto}
+                        src={profilePhoto}
                         alt="Profile"
                         className="w-40 h-40 rounded-full border border-gray-300 mb-4 object-cover"
                     />
                 ) : (
                     <IoMdPerson className="w-40 h-40 rounded-full border border-gray-300 mb-4" />
                 )}
-                <h3 className="text-xl font-bold text-gray-700">{profile.username || "Student Name"}</h3>
+                <h3 className="text-xl font-bold text-gray-700">{username || "Student Name"}</h3>
             </div>
 
 
@@ -203,7 +207,7 @@ const StudentProfile = () => {
                                     type="text"
                                     name="username"
                                     value={username}
-                                    onChange={handleEmailChange}
+                                    onChange={handleUsernameChange}
                                     className="w-full px-3 py-2 border rounded-md"
                                 />
                             </div>
@@ -227,7 +231,7 @@ const StudentProfile = () => {
                                 <input
                                     type="password"
                                     name="password"
-                                    
+
                                     onChange={handlePasswordChange}
                                     placeholder="Enter new password"
                                     className="w-full px-3 py-2 border rounded-md"
@@ -289,7 +293,7 @@ const StudentProfile = () => {
                 <div className="mt-8">
                     <button
                         onClick={handleGetRecommendations}
-                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200"
+                        className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-950 transition duration-200 hover:shadow-xl"
                         disabled={loadingRecommendations}
                     >
                         {loadingRecommendations ? "Loading..." : "Get Recommendations"}
@@ -297,8 +301,14 @@ const StudentProfile = () => {
                     {recommendations.length > 0 && (
                         <ul className="mt-4 space-y-2">
                             {recommendations.map((rec, index) => (
-                                <li key={index} className="text-gray-700">
-                                    {rec}
+                                <li
+                                    key={index}
+                                    className="bg-white shadow-md rounded-lg p-4 text-gray-800 flex items-center space-x-3 hover:bg-gray-100 transition-colors"
+                                >
+                                    <div className="w-8 h-8 flex justify-center items-center bg-gray-900 text-white rounded-full">
+                                        {index + 1}
+                                    </div>
+                                    <span>{rec}</span>
                                 </li>
                             ))}
                         </ul>

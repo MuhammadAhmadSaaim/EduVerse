@@ -19,16 +19,16 @@ const Login = () => {
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
-        { console.log(email) } //send post req to auth route
-        { console.log(password) }
+        // { console.log(email) } //send post req to auth route
+        // { console.log(password) }
         try {
             // Send a POST request to  server-side endpoint with the email and password
             const response = await axios.post("http://localhost:5000/api/auth/login", { email, password }, { withCredentials: true });
-            console.log(response)
+            // console.log(response)
             const { token, role } = response.data.data;
             if (token) {
                 localStorage.setItem('token', token);
-                console.log("Token stored")
+                // console.log("Token stored")
                 if (role === "student") {
                     navigate("/student");
                 } else if (role === "instructor") {

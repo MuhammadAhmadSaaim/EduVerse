@@ -144,21 +144,25 @@ const getRecommendations = async (req, res) => {
     // console.log("Received hobbies:", hobbies);
     const geminiApiKey = process.env.GOOGLE_API_KEY;
     // console.log("Gemini API Key:", geminiApiKey);
-
-    try {
-        const genAI = await new GoogleGenerativeAI(geminiApiKey);
-        const model = await genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const hobbiesnew = hobbies.join(",");
-        const prompt = `Suggest 3 subjects related to ${hobbiesnew}. Only give me names separated by commas. Nothing else.`
-        const result = await model.generateContent(prompt);
-        const text = await result.response.text();
-        let textArray = text.split(",");
-        // console.log(text)
-        res.status(200).json(textArray);
-    } catch (error) {
-        console.error("Error fetching recommendations:", error);
-        res.status(500).json({ error: "Failed to fetch recommendations" });
+    if(hobbies){
+        try {
+            const genAI = await new GoogleGenerativeAI(geminiApiKey);
+            const model = await genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const hobbiesnew = hobbies.split(",");
+            const prompt = `Suggest 3 subjects related to ${hobbiesnew}. Only give me names separated by commas. Nothing else.`
+            const result = await model.generateContent(prompt);
+            const text = await result.response.text();
+            let textArray = text.split(",");
+            // console.log(text)
+            res.status(200).json(textArray);
+        } catch (error) {
+            console.error("Error fetching recommendations:", error);
+            res.status(500).json({ error: "Failed to fetch recommendations" });
+        }
+    }else{
+        res.status(500).json({ error: "Failed to fetch recommendations because of no hobbies" });
     }
+    
 }
 
 

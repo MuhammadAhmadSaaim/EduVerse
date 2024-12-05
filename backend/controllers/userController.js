@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
+const cloudinary = require("cloudinary").v2;
 
 const getUserProfile = async (req, res) => {
     try {
@@ -32,6 +33,11 @@ const updateProfile = async (req, res) => {
         if (password) {
             user.password = await bcrypt.hash(password, 10);
         }
+        if (profilePhoto ) {
+            const uploadedResponse = await cloudinary.uploader.upload(profilePhoto);
+				pic = uploadedResponse.secure_url;
+        }
+        // console.log(profilePhoto);
         user.profilePhoto = profilePhoto || user.profilePhoto;
         user.hobbies = hobbies || user.hobbies;
 
