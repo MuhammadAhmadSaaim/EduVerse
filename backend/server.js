@@ -3,6 +3,7 @@ const connectDB = require("./config/db");
 const cors = require("cors");
 const { v2: cloudinary } = require("cloudinary");
 const dotenv = require("dotenv");
+const path = require("path");
 
 dotenv.config();
 const app = express();
@@ -28,6 +29,7 @@ cloudinary.config({
 // Connect to MongoDB
 connectDB();
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
 // Routes

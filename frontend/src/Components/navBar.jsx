@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
+    const navigate = useNavigate();
+
     // State to toggle the dropdown visibility
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -13,7 +16,9 @@ const Navbar = () => {
         <div className="bg-gray-900 text-white py-4 px-8">
             <div className="flex justify-between items-center">
                 {/* Centered App Name */}
-                <div className="text-2xl font-bold">EduVerse</div>
+                <div onClick={() => navigate('/')}
+                    className="text-2xl font-bold hover:cursor-pointer
+                    ">EduVerse</div>
 
                 {/* Dropdown on the right */}
                 <div className="relative">
