@@ -268,13 +268,13 @@ const getRecommendations = async (req, res) => {
         try {
             const genAI = await new GoogleGenerativeAI(geminiApiKey);
             const model = await genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-            const hobbiesnew = hobbies.split(",");
+            const hobbiesnew = hobbies.join(",");
             const prompt = `Suggest 3 subjects related to ${hobbiesnew}. Only give me names separated by commas. Nothing else.`
             const result = await model.generateContent(prompt);
             const text = await result.response.text();
             let textArray = text.split(",");
             // console.log(text)
-            res.status(200).json(textArray);
+            res.status(200).json(textArray);               
         } catch (error) {
             console.error("Error fetching recommendations:", error);
             res.status(500).json({ error: "Failed to fetch recommendations" });

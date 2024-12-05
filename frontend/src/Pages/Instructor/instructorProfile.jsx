@@ -12,18 +12,21 @@ const InstructorProfile = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [password, setPassword] = useState("");
     const [courses, setCourses] = useState([]); // State for courses
+    const [profilePhoto,setProfilePhoto] = useState(null);
     const token = localStorage.getItem("token");
 
     // Fetch profile data
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                console.log(token);
+                //console.log(token);
                 const response = await axios.get("http://localhost:5000/api/user/getProfile", {
                     headers: {
                         Authorization: `Bearer ${token}`, // Add token to the Authorization header
                     },
                 });
+                //setProfile(response.data);
+                setProfilePhoto(response.profilePhoto);
                 setProfile(response.data);
             } catch (error) {
                 console.error("Error fetching profile:", error);
@@ -42,7 +45,7 @@ const InstructorProfile = () => {
                 });
                 setCourses(response.data.courses);
                  // Assuming response contains an array of courses
-                 console.log(response);
+                //  console.log(response);
             } catch (error) {
                 console.error("Error fetching courses:", error);
             }
@@ -65,14 +68,16 @@ const InstructorProfile = () => {
     // Handle profile photo file upload
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        setSelectedFile(file);
-
-        // Preview the uploaded image
-        const reader = new FileReader();
-        reader.onload = () => {
-            setProfile({ ...profile, profilePhoto: reader.result });
-        };
-        reader.readAsDataURL(file);
+        console.log("in handle file change");
+        console.log(file);
+        //setSelectedFile(file);
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            setProfilePhoto(reader.result);
+          };
+          reader.readAsDataURL(file);
+        }
     };
 
 
@@ -104,9 +109,9 @@ const InstructorProfile = () => {
         <div className="min-h-screen flex bg-gray-100">
             {/* Left Column */}
             <div className="w-1/4 bg-gray-100 flex flex-col justify-center items-center p-6">
-                {profile.profilePhoto ? (
+                {profilePhoto ? (
                     <img
-                        src={profile.profilePhoto}
+                        src={profilePhoto}
                         alt="Profile"
                         className="w-40 h-40 rounded-full border border-gray-300 mb-4 object-cover"
                     />

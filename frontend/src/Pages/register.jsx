@@ -57,7 +57,7 @@ const Register = () => {
         <div
             className="h-screen w-screen bg-cover flex items-center justify-center backdrop-blur-md"
             style={{
-                backgroundImage: `url('/bg_image.jpg')`,
+                backgroundImage: `url('/bg_image2.jpg')`,
             }}
         >
             <form
@@ -126,7 +126,7 @@ const Register = () => {
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-500 text-white py-3 rounded hover:bg-blue-600"
+                    className="w-full bg-gray-900 text-white py-3 rounded hover:bg-gray-950"
                 >
                     Register
                 </button>

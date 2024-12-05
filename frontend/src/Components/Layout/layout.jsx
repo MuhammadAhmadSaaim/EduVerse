@@ -10,4 +10,4 @@ export const Layout = (props) => {
             <Footer />
         </div>
     )
-}
+} 
