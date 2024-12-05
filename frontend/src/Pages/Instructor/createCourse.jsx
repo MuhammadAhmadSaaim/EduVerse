@@ -13,6 +13,8 @@ const CreateCourse = () => {
         content: [],
     });
 
+    const token = localStorage.getItem("token");
+
     const [popupVisible, setPopupVisible] = useState(false);
     const navigate = useNavigate();
 
@@ -69,6 +71,7 @@ const CreateCourse = () => {
             description: contentItem.description,
         }));
 
+
         formData.append("content", JSON.stringify(contentData));
 
         // Handle the thumbnail image upload
@@ -82,7 +85,7 @@ const CreateCourse = () => {
             const response = await axios.post("http://localhost:5000/api/courses/create", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzUwYTYzY2Q2NzQ0MDIxZjIwZDdhOGYiLCJpYXQiOjE3MzMzODY5NzMsImV4cCI6MTczMzM5MDU3M30.3rYFLc1s5KLYRjAUjD9PS2eUEEVCAXEpn5pcAeGb8co",
+                    Authorization: `Bearer ${token}`,
                 },
             });
             console.log("Course created:", response.data);
