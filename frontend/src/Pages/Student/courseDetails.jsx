@@ -116,7 +116,7 @@ const CourseDetails = () => {
     }
 
     return (
-        <div className="p-8 bg-blue-50 rounded-lg shadow-xl max-w-4xl mx-auto">
+        <div className="p-8 bg-blue-50 rounded-lg shadow-xl my-10 w-4/5 mx-auto">
             {/* Header Section */}
             <div className="flex items-center justify-between mb-6">
                 {/* Left Side: Title and Description */}
@@ -170,7 +170,7 @@ const CourseDetails = () => {
             {/* Enroll Button */}
             <div className="flex justify-center">
                 <button
-                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300"
+                    className="bg-gray-800 text-white px-6 py-3 rounded-lg hover:shadow-xl transition-all duration-300"
                     onClick={() => navigate(`/course/enrolled/${course.id}`)}
                 >
                     Enroll for Free
