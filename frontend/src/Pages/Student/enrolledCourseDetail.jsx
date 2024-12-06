@@ -6,6 +6,7 @@ const EnrolledCourseDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams(); // Get course ID from URL parameters
   console.log(id);
+  const [loading, setLoading] = useState(true);
   const [course, setCourse] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0); // Track current lesson index
@@ -36,6 +37,8 @@ const EnrolledCourseDetails = () => {
     } catch (err) {
       console.error(err);
       alert("Error fetching enrolled course details");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,10 +108,10 @@ const EnrolledCourseDetails = () => {
     // navigate("CERTIFICATE PAGE");
   };
 
-  if (!course || !imageUrl) {
+  if (loading || !course || !imageUrl) {
     return (
-      <div className="p-6 text-center text-red-500 font-semibold">
-        Details not found!
+      <div className="p-6 text-center text-lg text-gray-600">
+        Loading course details...
       </div>
     );
   }
