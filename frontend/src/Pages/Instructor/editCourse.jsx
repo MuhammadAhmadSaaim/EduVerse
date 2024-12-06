@@ -367,7 +367,7 @@ const EditCourse = () => {
                             <button
                                 type="button"
                                 onClick={() => addContentSection("video")}
-                                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
                             >
                                 Add New Video
                             </button>

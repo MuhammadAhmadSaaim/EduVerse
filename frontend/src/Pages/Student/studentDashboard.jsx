@@ -1,26 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import StudentEnrolledCourseCard from "../../Components/Student/StudentEnrolledCourseCard";
 import StudentCourseCard from "../../Components/Student/studentCourseCard";
 import axios from "axios";
 
 const StudentDashboard = () => {
-  const navigate = useNavigate();
-
-  const studentId = "67516d372162be7640476294"; // Sample student ID
+  const token = localStorage.getItem("token");
 
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [studentId, setStudentId] = useState("");
+  const [username, setUsername] = useState("");
 
-  // Fetch courses from the backend
+  useEffect(() => {
+    const fetchProfile = async () => {
+        try {
+            const response = await axios.get("http://localhost:5000/api/user/getProfile", {
+                headers: {
+                    Authorization: `Bearer ${token}`, 
+                },
+            });
+            setStudentId(response.data._id);
+            setUsername(response.data.username);
+            console.log("studentId:", response.data._id,response.data.username)
+        } catch (error) {
+            console.error("Error fetching profile:", error);
+        }
+    };
+
+    fetchProfile();
+}, []);
+
+
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/courses", {
           headers: {
-            "x-auth-token":
-              "eeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzUxNmQzNzIxNjJiZTc2NDA0NzYyOTQiLCJpYXQiOjE3MzM0MTU4MjMsImV4cCI6MTczMzQ0NDYyM30.yAHQ-DKFTCuDE2313QDYycQV-W55MqWOdRr6JJ6yTTQ",
+            Authorization: `Bearer ${token}`,
           },
         });
         setCourses(response.data);
@@ -60,7 +77,7 @@ const StudentDashboard = () => {
   return (
     <div className="px-20 py-6">
       {/* Welcome message */}
-      <h1 className="text-2xl font-bold mb-2">Welcome, Saba</h1>
+      <h1 className="text-2xl font-bold mb-2">Welcome, {username}</h1>
       <hr className="border-gray-300 my-6" />
 
       {/* My Courses Section */}

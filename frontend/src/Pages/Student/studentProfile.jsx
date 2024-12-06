@@ -31,6 +31,7 @@ const StudentProfile = () => {
                         Authorization: `Bearer ${token}`, // Add token to the Authorization header
                     },
                 });
+                console.log(response.data);
                 // console.log(response.data);
                 setPassword(response.data.password); // Update state with profile data
                 setEmail(response.data.email);

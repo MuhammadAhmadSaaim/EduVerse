@@ -33,7 +33,6 @@ const EnrolledCourseDetails = () => {
         : `${backendBaseURL}${fetchedCourse.thumbnail?.replace(/\\/g, "/")}`; // Replace backslashes with forward slashes
 
       setImageUrl(courseImageUrl);
-
     } catch (err) {
       console.error(err);
       alert("Error fetching enrolled course details");
@@ -56,28 +55,28 @@ const EnrolledCourseDetails = () => {
     }
   };
 
-  const handleMarkAsDone = async () => {
-    try {
-      await axios.post(
-        `http://localhost:5000/api/courses/mark-as-done`,
-        {
-          courseId: id,
-          contentId: course.content[currentLessonIndex].id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      alert(
-        `Lesson "${course.content[currentLessonIndex].title}" marked as done!`
-      );
-    } catch (err) {
-      console.error(err);
-      alert("Error marking lesson as done");
-    }
-  };
+  // const handleMarkAsDone = async () => {
+  //   try {
+  //     await axios.post(
+  //       `http://localhost:5000/api/courses/mark-as-done`,
+  //       {
+  //         courseId: id,
+  //         contentId: course.content[currentLessonIndex].id,
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     alert(
+  //       `Lesson "${course.content[currentLessonIndex].title}" marked as done!`
+  //     );
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert("Error marking lesson as done");
+  //   }
+  // };
 
   const handleUnenroll = async () => {
     const confirmed = window.confirm(
@@ -102,6 +101,10 @@ const EnrolledCourseDetails = () => {
     }
   };
 
+  const handleGenerateCertificate = async () => {
+    // navigate("CERTIFICATE PAGE");
+  };
+
   if (!course || !imageUrl) {
     return (
       <div className="p-6 text-center text-red-500 font-semibold">
@@ -111,6 +114,7 @@ const EnrolledCourseDetails = () => {
   }
 
   const currentLesson = course.content[currentLessonIndex];
+  const isLastLesson = currentLessonIndex === course.content.length - 1;
 
   const getVideoId = (url) => {
     const match = url.match(
@@ -152,7 +156,7 @@ const EnrolledCourseDetails = () => {
           </div>
           <button
             onClick={handleUnenroll}
-            className="bg-gray-800 hover:bg-gray-700 text-white w-48 px-4 py-2 rounded-md shadow-md font-semibold"
+            className="bg-gray-600 hover:bg-gray-700 text-white w-48 px-4 py-2 rounded-md shadow-md font-semibold"
           >
             Unenroll
           </button>
@@ -160,54 +164,61 @@ const EnrolledCourseDetails = () => {
       </div>
 
       {/* Course Content Section */}
-      <div className="bg-gray-900 p-4 rounded-lg text-white shadow-md">
-        <div className="bg-gray-800 text-white text-lg font-bold p-2 rounded-t-md pl-5">
-          {currentLesson.title}
-        </div>
-        <div className="flex justify-center items-center my-1">
-          <div className="h-64 sm:h-80 lg:h-96 w-full flex justify-center items-center rounded-lg shadow-lg">
-            <iframe
-              src={`https://www.youtube.com/embed/${getVideoId(
-                currentLesson.videoUrl
-              )}?autoplay=0&showinfo=0&controls=1`}
-              title={currentLesson.title}
-              className="w-[90%] h-5/6 rounded-md"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          </div>
-        </div>
-        <div className="flex">
-          <button
-            onClick={handlePreviousLesson}
-            disabled={currentLessonIndex === 0}
-            className={`flex-1 p-4 ${
-              currentLessonIndex === 0
-                ? "bg-yellow-300 cursor-not-allowed"
-                : "bg-yellow-500 hover:bg-yellow-600 text-white"
-            } text-lg font-semibold rounded-bl-md`}
-          >
-            Previous
-          </button>
-          <button
-            onClick={handleMarkAsDone}
-            className="flex-1 bg-blue-500 hover:bg-blue-600 text-white p-4 text-lg font-semibold"
-          >
-            Mark as Done
-          </button>
-          <button
-            onClick={handleNextLesson}
-            disabled={currentLessonIndex === course.content.length - 1}
-            className={`flex-1 p-4 ${
-              currentLessonIndex === course.content.length - 1
-                ? "bg-green-300 cursor-not-allowed"
-                : "bg-green-500 hover:bg-green-600 text-white"
-            } text-lg font-semibold rounded-br-md`}
-          >
-            Next
-          </button>
-        </div>
-      </div>
+<div className="bg-gray-900 p-4 rounded-lg text-white shadow-md">
+  <div className="bg-gray-800 text-white text-lg font-bold p-2 rounded-t-md pl-5">
+    {currentLesson.title}
+  </div>
+  <div className="flex justify-center items-center my-1">
+    <div className="h-64 sm:h-80 lg:h-96 w-full flex justify-center items-center rounded-lg shadow-lg">
+      <iframe
+        src={`https://www.youtube.com/embed/${getVideoId(
+          currentLesson.videoUrl
+        )}?autoplay=0&showinfo=0&controls=1`}
+        title={currentLesson.title}
+        className="w-[90%] h-5/6 rounded-md"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      ></iframe>
+    </div>
+  </div>
+  <div className="flex">
+    <button
+      onClick={handlePreviousLesson}
+      disabled={isLastLesson || currentLessonIndex === 0}
+      className={`flex-1 py-3 ${
+        currentLessonIndex === 0 || isLastLesson
+          ? "bg-yellow-300 cursor-not-allowed"
+          : "bg-yellow-500 hover:bg-yellow-600 text-white"
+      } text-lg font-semibold rounded-bl-md`}
+    >
+      Previous
+    </button>
+    <button
+      onClick={handleNextLesson}
+      disabled={isLastLesson}
+      className={`flex-1 py-3 ${
+        isLastLesson
+          ? "bg-green-300 cursor-not-allowed"
+          : "bg-green-500 hover:bg-green-600 text-white"
+      } text-lg font-semibold rounded-br-md`}
+    >
+      Next
+    </button>
+  </div>
+</div>
+
+{/* Generate Certificate Button */}
+{isLastLesson && (
+  <div className="mt-6">
+    <button
+      onClick={handleGenerateCertificate}
+      className="bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg text-lg font-semibold shadow-md w-full"
+    >
+      Generate Certificate
+    </button>
+  </div>
+)}
+
     </div>
   );
 };
