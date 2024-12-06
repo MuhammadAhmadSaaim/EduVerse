@@ -101,14 +101,6 @@ Make sure you have the following installed:
 
 ---
 
-## Future Enhancements
-- Adding live video conferencing using Zoom.
-- Advanced analytics for course performance.
-- Support for internationalization (i18n).
-- Integration with additional payment gateways.
-
----
-
 Feel free to contribute to the project! 🎓  
 For questions, contact the development team.
 
