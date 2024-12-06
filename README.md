@@ -1,11 +1,11 @@
 
 
-```markdown
+
 # EduVerse
 
 **EduVerse** is an advanced E-Learning Platform designed to connect instructors and students in an interactive and optimized environment. It enables instructors to manage courses effortlessly while providing students with engaging learning experiences.
 
----
+
 
 ## Project Structure
 ```
