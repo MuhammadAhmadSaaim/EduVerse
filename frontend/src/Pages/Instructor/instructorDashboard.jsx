@@ -14,6 +14,24 @@ const InstructorDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const token = localStorage.getItem("token");
+    const [username, setUsername] = useState("");
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const response = await axios.get("http://localhost:5000/api/user/getProfile", {
+                    headers: {
+                        Authorization: `Bearer ${token}`, 
+                    },
+                });
+                setUsername(response.data.username);
+            } catch (error) {
+                console.error("Error fetching profile:", error);
+            }
+        };
+    
+        fetchProfile();
+    }, []);
 
     // Fetch courses from the backend
     useEffect(() => {
@@ -124,13 +142,13 @@ const InstructorDashboard = () => {
     return (
         <div className="px-20 py-6 text-gray-800">
             {/* Welcome message */}
-            <h1 className="text-2xl font-bold mb-2">Welcome, Instructor</h1>
+            <h1 className="text-2xl font-bold mb-2">Welcome, {username}</h1>
             <hr className="border-gray-300 my-6" />
 
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold">My Courses</h2>
                 <button
-                    className="bg-gray-800 text-white px-4 py-2 rounded-md"
+                    className="bg-gray-800 text-white px-4 py-2 rounded-md hover:shadow-lg"
                     onClick={() => navigate('/course/create')}
                 >
                     Add Course
@@ -139,7 +157,7 @@ const InstructorDashboard = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
                 {courses.map(course => (
-                    <CourseCard key={course._id} course={course} />
+                    <CourseCard key={course.id} course={course} />
                 ))}
             </div>
             <hr className="border-gray-300 my-6" />

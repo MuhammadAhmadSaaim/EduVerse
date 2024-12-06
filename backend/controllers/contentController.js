@@ -2,10 +2,10 @@ const Content = require("../models/Content");
 
 // Create new content
 const createContent = async (req, res) => {
-    const { title, videoUrl, duration, type, description, thumbnail } = req.body;
+    const { title, videoUrl, type, description, thumbnail } = req.body;
 
     try {
-        const newContent = new Content({ title, videoUrl, duration, type, description, thumbnail });
+        const newContent = new Content({ title, videoUrl, type, description, thumbnail });
         await newContent.save();
         res.status(201).json(newContent);
     } catch (err) {
@@ -39,7 +39,7 @@ const getContentById = async (req, res) => {
 // Update content by ID
 const updateContent = async (req, res) => {
     const { contentId } = req.params;
-    const { title, videoUrl, duration, type, description, thumbnail } = req.body;
+    const { title, videoUrl, type, description, thumbnail } = req.body;
 
     try {
         const content = await Content.findById(contentId);
@@ -48,7 +48,6 @@ const updateContent = async (req, res) => {
         // Update only provided fields
         content.title = title || content.title;
         content.videoUrl = videoUrl || content.videoUrl;
-        content.duration = duration || content.duration;
         content.type = type || content.type;
         content.description = description || content.description;
         content.thumbnail = thumbnail || content.thumbnail;

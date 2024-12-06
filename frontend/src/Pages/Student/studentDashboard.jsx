@@ -1,42 +1,60 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import StudentEnrolledCourseCard from "../../Components/Student/StudentEnrolledCourseCard";
 import StudentCourseCard from "../../Components/Student/studentCourseCard";
 import axios from "axios";
 
 const StudentDashboard = () => {
-  const navigate = useNavigate();
-
-  const studentId = "67516d372162be7640476294"; // Sample student ID
+  const token = localStorage.getItem("token");
 
   const [courses, setCourses] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [studentId, setStudentId] = useState("");
+  const [username, setUsername] = useState("");
 
-    // Fetch courses from the backend
-    useEffect(() => {
-        const fetchCourses = async () => {
-            try {
-                const response = await axios.get("http://localhost:5000/api/courses", {
-                    headers: {
-                        "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzUwYTYzY2Q2NzQ0MDIxZjIwZDdhOGYiLCJpYXQiOjE3MzMzODY5NzMsImV4cCI6MTczMzM5MDU3M30.3rYFLc1s5KLYRjAUjD9PS2eUEEVCAXEpn5pcAeGb8co",
-                    },
-                });
-                setCourses(response.data);
-                console.log(response.data);
-            } catch (err) {
-                setError("Failed to fetch courses. Please try again.");
-            } finally {
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    const fetchProfile = async () => {
+        try {
+            const response = await axios.get("http://localhost:5000/api/user/getProfile", {
+                headers: {
+                    Authorization: `Bearer ${token}`, 
+                },
+            });
+            setStudentId(response.data._id);
+            setUsername(response.data.username);
+            console.log("studentId:", response.data._id,response.data.username)
+        } catch (error) {
+            console.error("Error fetching profile:", error);
+        }
+    };
 
-        fetchCourses();
-    }, []);
+    fetchProfile();
+}, []);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
-    
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/courses", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setCourses(response.data);
+        console.log(response.data);
+      } catch (err) {
+        setError("Failed to fetch courses. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
   // Filter courses where the student is enrolled
   const myCourses = courses.filter((course) =>
     course.students.some((student) => student.toString() === studentId)
@@ -44,7 +62,8 @@ const StudentDashboard = () => {
 
   // Filter courses that the student is NOT enrolled in (New Courses)
   const newCourses = courses.filter(
-    (course) => !course.students.some((student) => student.toString() === studentId)
+    (course) =>
+      !course.students.some((student) => student.toString() === studentId)
   );
 
   if (loading) {
@@ -58,7 +77,7 @@ const StudentDashboard = () => {
   return (
     <div className="px-20 py-6">
       {/* Welcome message */}
-      <h1 className="text-2xl font-bold mb-2">Welcome, Saba</h1>
+      <h1 className="text-2xl font-bold mb-2">Welcome, {username}</h1>
       <hr className="border-gray-300 my-6" />
 
       {/* My Courses Section */}
@@ -79,14 +98,6 @@ const StudentDashboard = () => {
         {newCourses.map((course) => (
           <StudentCourseCard key={course.id} course={course} />
         ))}
-      </div>
-
-      {/* Recommended Courses Section */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">Recommended For You</h2>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* You can add logic here to display recommended courses */}
       </div>
     </div>
   );
