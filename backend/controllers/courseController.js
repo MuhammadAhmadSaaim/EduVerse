@@ -353,7 +353,7 @@ const getRecommendations = async (req, res) => {
             const genAI = await new GoogleGenerativeAI(geminiApiKey);
             const model = await genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
             const hobbiesnew = hobbies.join(",");
-            const prompt = `Suggest 3 subjects related to ${hobbiesnew}. Only give me names separated by commas. Nothing else.`
+            const prompt = `Suggest 4 subjects related to ${hobbiesnew}. Only give me names separated by commas. Nothing else.`
             const result = await model.generateContent(prompt);
             const text = await result.response.text();
             let textArray = text.split(",");

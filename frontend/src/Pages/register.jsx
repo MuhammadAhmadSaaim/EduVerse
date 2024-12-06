@@ -8,8 +8,8 @@ const Register = () => {
         email: "",
         password: "",
         role: "student",
-        profilePhoto: "",
-        hobbies: "",
+        // profilePhoto: "",
+        // hobbies: "",
     });
     const navigate=useNavigate();
    
@@ -23,12 +23,12 @@ const Register = () => {
         e.preventDefault();
         //console.log("User Data:", formData);
         try {
-            const { email, password, role, username, profilePhoto, hobbies } = formData; // Extract all fields
+            const { email, password, role, username} = formData; // Extract all fields
     
             // Send a POST request to server-side endpoint with all necessary data
             const response = await axios.post(
                 "http://localhost:5000/api/auth/register",
-                { email, password, role, username, profilePhoto, hobbies },
+                { email, password, role, username },
                 { withCredentials: true }
             );
     
@@ -38,8 +38,11 @@ const Register = () => {
                 localStorage.setItem("token", response.data.token);
                 console.log("Token stored");
                 // Navigate to the desired page
-                if(role == "student") navigate("/", { replace: true });
-                else if(role == "instructor") navigate("/", { replace: true });
+                if (role === "student") {
+                    navigate("/student/dashboard");
+                } else if (role === "instructor") {
+                    navigate("/instructor/dashboard");
+                }
             } else {
                 console.log("Signup response received but not successful");
             }
@@ -106,7 +109,7 @@ const Register = () => {
                     <option value="instructor">Instructor</option>
                 </select>
 
-                <input
+                {/* <input
                     type="text"
                     name="profilePhoto"
                     placeholder="Profile Photo URL"
@@ -122,7 +125,7 @@ const Register = () => {
                     className="w-full p-3 mb-4 border rounded"
                     value={formData.hobbies}
                     onChange={handleChange}
-                />
+                /> */}
 
                 <button
                     type="submit"

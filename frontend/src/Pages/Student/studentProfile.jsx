@@ -13,7 +13,7 @@ const StudentProfile = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [hobbies, setHobbies] = useState("");
     const [email, setEmail] = useState("");
-    const [profilePhoto,setProfilePhoto] = useState(null);
+    const [profilePhoto, setProfilePhoto] = useState(null);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [courses, setCourses] = useState([]); // State for enrolled courses
@@ -38,7 +38,7 @@ const StudentProfile = () => {
                 setHobbies(response.data.hobbies);
                 setUsername(response.data.username);
                 setProfilePhoto(response.data.profilePhoto);
-                
+
             } catch (error) {
                 console.error("Error fetching profile:", error);
             }
@@ -48,20 +48,20 @@ const StudentProfile = () => {
     }, []);
 
     // Fetch courses data
-    useEffect(() => {
-        const fetchCourses = async () => {
-            try {
-                const response = await axios.get("http://localhost:5000/api/courses/", {
-                    withCredentials: true,
-                });
-                setCourses(response.data.courses); // Assuming response contains an array of courses
-            } catch (error) {
-                console.error("Error fetching courses:", error);
-            }
-        };
+    // useEffect(() => {
+    //     const fetchCourses = async () => {
+    //         try {
+    //             const response = await axios.get("http://localhost:5000/api/courses/", {
+    //                 withCredentials: true,
+    //             });
+    //             setCourses(response.data.courses); // Assuming response contains an array of courses
+    //         } catch (error) {
+    //             console.error("Error fetching courses:", error);
+    //         }
+    //     };
 
-        fetchCourses();
-    }, []);
+    //     fetchCourses();
+    // }, []);
 
     // Handle input changes
     const handleChange = (e) => {  //sabki individually change karni ahi state update karni
@@ -126,13 +126,13 @@ const StudentProfile = () => {
     // Handle profile photo file upload
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setProfilePhoto(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setProfilePhoto(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
 
@@ -199,9 +199,9 @@ const StudentProfile = () => {
                     {/* Using flexbox for columns */}
                     <div className="flex flex-wrap gap-x-6">
                         {/* Left Column (Username, Email, Password) */}
-                        <div className="w-full md:w-1/2 space-y-6">
+                        <div className="w-full  space-y-6">
                             {/* Username */}
-                            <div>
+                            <div className="space-y-2">
                                 <label className="block text-sm font-bold  text-gray-700">Username</label>
                                 <input
                                     placeholder="Enter username"
@@ -214,7 +214,7 @@ const StudentProfile = () => {
                             </div>
 
                             {/* Email */}
-                            <div>
+                            <div className="space-y-2">
                                 <label className="block text-sm font-bold text-gray-700">Email</label>
                                 <input
                                     placeholder="Enter email"
@@ -227,7 +227,7 @@ const StudentProfile = () => {
                             </div>
 
                             {/* Change Password */}
-                            <div>
+                            <div className="space-y-2">
                                 <label className="block text-sm font-bold text-gray-700"> Password</label>
                                 <input
                                     type="password"
@@ -239,22 +239,22 @@ const StudentProfile = () => {
                                 />
                             </div>
                             {/* hobbies */}
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700">Hobbies</label>
+                            <div className="space-y-2 ">
+                                <label className="block text-sm font-bold text-gray-700 ">Hobbies</label>
                                 <input
                                     type="text"
                                     name="hobbies"
                                     value={hobbies}
                                     onChange={handleHobbiesChange}
                                     placeholder="Enter your hobbies"
-                                    className="w-full px-3 py-2 border rounded-md"
+                                    className="w-full  px-3 py-2 border rounded-md"
                                 />
                             </div>
                         </div>
 
                         {/* Right Column (Enrolled Courses) */}
-                        <div className="w-full md:w-1/2 space-y-6">
-                            {/* Enrolled Courses */}
+                        {/* <div className="w-full md:w-1/2 space-y-6">
+                            Enrolled Courses
                             <div>
                                 <label className="block text-sm font-bold text-gray-700">Enrolled Courses</label>
                                 <ul className="list-disc pl-5">
@@ -269,11 +269,11 @@ const StudentProfile = () => {
                                     )}
                                 </ul>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Profile Photo Upload */}
-                    <div>
+                    <div className="space-y-2">
                         <label className="block text-sm font-bold text-gray-700">Profile Image</label>
                         <input
                             type="file"
@@ -285,34 +285,35 @@ const StudentProfile = () => {
                     {/* Update Button */}
                     <button
                         type="submit"
-                        className="bg-gray-900 text-white cursor-pointer px-4 py-2 rounded-md hover:bg-gray-950 text-semibold hover:shadow-xl transition duration-200 justify-center w-full"
+                        className="bg-gray-900 space-y-2 text-white cursor-pointer px-4 py-2 rounded-md hover:bg-gray-950 text-semibold hover:shadow-xl transition duration-200 justify-center w-full mb-6"
                     >
                         Update Profile
                     </button>
                 </form>
+                <hr className="border-gray-300 my-6" />
                 {/* Recommendations */}
                 <div className="mt-8">
                     <button
                         onClick={handleGetRecommendations}
-                        className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-950 transition duration-200 hover:shadow-xl"
+                        className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-950 transition duration-200 hover:shadow-xl w-full"
                         disabled={loadingRecommendations}
                     >
-                        {loadingRecommendations ? "Loading..." : "Get Recommendations"}
+                        {loadingRecommendations ? "Loading..." : "Get AI based Recommendations"}
                     </button>
                     {recommendations.length > 0 && (
-                        <ul className="mt-4 space-y-2">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
                             {recommendations.map((rec, index) => (
-                                <li
+                                <div
                                     key={index}
-                                    className="bg-white shadow-md rounded-lg p-4 text-gray-800 flex items-center space-x-3 hover:bg-gray-100 transition-colors"
+                                    className="bg-white shadow-lg  rounded-lg p-4 text-gray-800 flex items-center space-x-3 hover:bg-gray-200 transition-colors border-gray-900 border-x-4 border-y-2"
                                 >
-                                    <div className="w-8 h-8 flex justify-center items-center bg-gray-900 text-white rounded-full">
+                                    <div className="w-8 h-8 flex  justify-center items-center bg-gray-900 text-white rounded-full">
                                         {index + 1}
                                     </div>
                                     <span>{rec}</span>
-                                </li>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     )}
                 </div>
             </div>

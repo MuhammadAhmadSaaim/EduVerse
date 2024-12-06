@@ -36,23 +36,23 @@ const InstructorProfile = () => {
         fetchProfile();
     }, []);
 
-    // Fetch courses data
-    useEffect(() => {
-        const fetchCourses = async () => {
-            try {
-                const response = await axios.get("http://localhost:5000/api/courses/", {
-                    withCredentials: true,
-                });
-                setCourses(response.data.courses);
-                 // Assuming response contains an array of courses
-                //  console.log(response);
-            } catch (error) {
-                console.error("Error fetching courses:", error);
-            }
-        };
+    // // Fetch courses data
+    // useEffect(() => {
+    //     const fetchCourses = async () => {
+    //         try {
+    //             const response = await axios.get("http://localhost:5000/api/courses/", {
+    //                 withCredentials: true,
+    //             });
+    //             setCourses(response.data.courses);
+    //              // Assuming response contains an array of courses
+    //             //  console.log(response);
+    //         } catch (error) {
+    //             console.error("Error fetching courses:", error);
+    //         }
+    //     };
 
-        fetchCourses();
-    }, []);
+    //     fetchCourses();
+    // }, []);
 
     // Handle input changes
     const handleChange = (e) => {
@@ -118,7 +118,7 @@ const InstructorProfile = () => {
                 ) : (
                     <IoMdPerson className="w-40 h-40 rounded-full border border-gray-300 mb-4" />
                 )}
-                <h3 className="text-xl font-bold text-gray-700">{profile.username || "Student Name"}</h3>
+                <h3 className="text-xl font-bold text-gray-700">{profile.username || "Instructor Name"}</h3>
             </div>
 
 
@@ -131,7 +131,7 @@ const InstructorProfile = () => {
                         {/* Left Column (Username, Email, Password) */}
                         <div className="w-full md:w-1/2 space-y-6">
                             {/* Username */}
-                            <div>
+                            <div className="space-y-2">
                                 <label className="block text-sm font-bold  text-gray-700">Username</label>
                                 <input
                                     placeholder="Enter username"
@@ -144,7 +144,7 @@ const InstructorProfile = () => {
                             </div>
 
                             {/* Email */}
-                            <div>
+                            <div className="space-y-2">
                                 <label className="block text-sm font-bold text-gray-700">Email</label>
                                 <input
                                     placeholder="Enter email"
@@ -157,7 +157,7 @@ const InstructorProfile = () => {
                             </div>
 
                             {/* Change Password */}
-                            <div>
+                            <div className="space-y-2">
                                 <label className="block text-sm font-bold text-gray-700">Change Password</label>
                                 <input
                                     type="password"
@@ -171,9 +171,9 @@ const InstructorProfile = () => {
                         </div>
 
                         {/* Right Column (My Courses) */}
-                        <div className="w-full md:w-1/2 space-y-6">
+                        {/* <div className="w-full md:w-1/2 space-y-6"> */}
                             {/* My Courses */}
-                            <div>
+                            {/* <div>
                                 <label className="block text-sm font-bold text-gray-700">My Courses</label>
                                 <ul className="list-disc pl-5">
                                     { courses?.length > 0 ? (
@@ -186,12 +186,12 @@ const InstructorProfile = () => {
                                         <p className="text-gray-500">No course selected</p>
                                     )}
                                 </ul>
-                            </div>
-                        </div>
+                            </div> */}
+                        {/* </div> */}
                     </div>
 
                     {/* Profile Photo Upload */}
-                    <div>
+                    <div className="space-y-2">
                         <label className="block text-sm font-bold text-gray-700">Profile Image</label>
                         <input
                             type="file"
@@ -203,7 +203,7 @@ const InstructorProfile = () => {
                     {/* Update Button */}
                     <button
                         type="submit"
-                        className="bg-gray-900 text-white cursor-pointer px-4 py-2 rounded-md hover:bg-gray-950 text-semibold hover:shadow-xl transition duration-200 justify-center w-full"
+                        className="space-y-2 bg-gray-900 text-white cursor-pointer px-4 py-2 rounded-md hover:bg-gray-950 text-semibold hover:shadow-xl transition duration-200 justify-center w-full"
                     >
                         Update Profile
                     </button>

@@ -23,7 +23,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />   {/* make Login page */}
 
-
           {/* Login page route */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
